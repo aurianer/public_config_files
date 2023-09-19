@@ -1,0 +1,15 @@
+[submodule ".vim/pack/ctrlp.vim"]
+	path = .vim/pack/ctrlp.vim
+	url = https://github.com/ctrlpvim/ctrlp.vim.git
+[submodule ".vim/pack/tagbar"]
+	path = .vim/pack/tagbar
+	url = https://github.com/preservim/tagbar.git
+[submodule ".vim/pack/vim-fzf"]
+	path = .vim/pack/vim-fzf
+	url = https://github.com/junegunn/fzf.vim.git
+[submodule ".vim/pack/YouCompleteMe"]
+	path = .vim/pack/YouCompleteMe
+	url = https://github.com/ycm-core/YouCompleteMe.git
+[submodule ".vim/pack/ultisnips"]
+	path = .vim/pack/ultisnips
+	url = https://github.com/SirVer/ultisnips.git

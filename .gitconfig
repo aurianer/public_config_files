@@ -1,0 +1,209 @@
+# Copyright (c) 2019    Auriane Reverdell
+#
+# SPDX-License-Identifier: BSL-1.0
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+[user]
+    email = 8trash-can8@protonmail.ch
+    name = aurianer
+
+[commit]
+    gpgSign = false
+
+[cherry-pick]
+    gpgSign = false
+
+[rebase]
+    gpgSign = false
+
+[core]
+    editor=vim
+    #pager=cat
+
+[pager]
+    # Avoid entering the less mode page and have to type q
+    br=head -n60
+    di=head -n70
+    diciname=head -n2000
+    diname=head -n70
+    disname=head -n70
+    fo=head -n20
+    fof=head -n20
+    follow=head -n40
+    gl=head -n40
+    lg=head -n40
+    lgb=head -n40
+    tg=head -n40
+    # To print the percentage of the  diff you viewed
+    dici=less +Gg
+    diff=less +Gg
+
+[color]
+    ui = true
+    branch = auto
+    diff = auto
+    interactive = auto
+    status = auto
+    pager = true
+
+[color "status"]
+    added = green
+    changed = red bold
+    untracked = magenta bold
+
+[color "branch"]
+    remote = yellow
+
+[alias]
+    # We sometimes use anonymous functions to alias otherwise we get the parameters
+    addf = "!git add $(git diff --name-only --relative | head -n1)" # Add the first modified file
+    addu = add -u   # Add all modified files
+    br = branch
+    brf = branch -f
+    ba = branch -av
+    bl = "!git blame -L$2,$2 -- $1 #"    # To find out who modified a specific line of the file
+    bv = branch -vv
+    ci = commit
+    ciam = commit --amend
+    ciamno = commit --amend --no-edit
+    cimano = ciamno # To accept typo
+    ciamnono = commit --amend --no-edit --no-verify
+    cino = commit --no-verify
+    co = checkout
+    cof = "!git checkout $(git diff --name-only | head -n1)" # Checkout the first modified file
+    cp = cherry-pick
+    cpa = cherry-pick --abort
+    cpc = cherry-pick --continue
+    date = commit --amend --no-edit --date=format:relative:0.hours.ago
+    # Adding the quotes and the comment at the end to fix a regression introduced in git 2.28
+    dateh = "!git commit --amend --no-edit --date=format:relative:${1:-1}.hours.ago #"
+    dated = "!git commit --amend --no-edit --date=format:relative:${1:-1}.day.ago #"
+    dici = "!git diff ${1:-HEAD}^..${1:-HEAD} #"
+    diciname = "!git diff --name-only --relative ${1:-HEAD}^ ${1:-HEAD} #"
+    dif = !git diff $(git diff --name-only --relative | head -n1) # Diff the first modified file
+    difl = !git diff $(git diff --name-only --relative | tail -1) # Diff the last modified file
+    diname = diff --name-only
+    disname = diff --staged --name-only
+    dip = diff HEAD~1
+    dis = diff --staged
+    dl = "!git push $1 --delete $2 && git branch -d $2"
+    dlb = branch -d
+    dlbf = branch -D
+    fa = fetch --all
+    fpr = "!git fetch origin pull/$1/head:pr$1 #" # to fetch a PR
+    ft = fetch
+    ftprune = fetch --prune  # Delete branches which have been deleted on the remote
+    # Add a + in front of the first refs (the local one) to overwrite it
+    fttag = "!git fetch origin refs/tags/$1:refs/tags/$1"
+    # To fetch all the tags from origin and update the local ones
+    fttags = fetch origin refs/tags/*:refs/tags/*
+    fix = commit --fixup
+    fxi = commit --fixup
+    fo = log --graph --oneline --decorate --follow -- # Find which commit modify a certain file
+    fof = "!git log --graph --oneline --decorate --follow -- $(git diff --name-only | head -n1) $(git diff --staged --name-only | head -n1)" # fo but with first modified file
+    follow = log --graph --oneline --date=short --pretty=format:'%C(auto)%h%d %s %C(blue)%cd' --follow -- # Find which commit modify a certain file
+    followfull = log --graph --oneline --decorate --date=short --follow -- # No pager used
+    gp = !git grep $1 $(git rev-list --all) # grep accross revisions
+    gti = git
+    lfb = log --graph --oneline --decorate --pretty=tformat:'%C(auto)%h%d %s %C(blue)%ad' --date=short # Log specific branch without the print in the terminal
+    lf = lfb --all #when mispelling or to not have the same pager
+    lg = log --all --graph --pretty=tformat:'%C(auto)%h%d %s %C(blue)%ad' --date=short
+    logp = log --graph --pretty=format:'%C(yellow)%h%Creset %C(bold red)%d%Creset %s %Cgreen(%cr) %C(bold blue)(%an) %Creset' --abbrev-commit --date=relative
+    gl = lg
+    lgb = log --graph --oneline --decorate
+    lgf = log --date=short --follow --   # To know which commits modify a specific file
+    lgs = log --graph --oneline --decorate --date=short --all --stat
+    patch = !git diff $1 $2 > diff.patch    # Create a patch out of a diff
+    app = !git apply diff.patch         # apply it to the current state, useful with spack patches
+    pushf = push --force-with-lease
+    rb = rebase -i
+    rba = rebase --abort
+    rbc = rebase --continue
+    rbs = rebase --skip
+    rbe = rebase --edit-todo
+    re = remote
+    rev = remote -v
+    reflog = reflog --pretty=reflog
+    rmf = "!git rm $(git diff --name-only | head -n1)" # Checkout the first modified file
+    rp = remote prune       # Prune the branches that have been deleted on the remote repo
+    rs = reset
+    rsh = reset --hard
+    rshf = checkout HEAD --     # reset --hard a single file
+    rv = remote -vv
+    squ = commit --squash
+    st = status
+    stf = status -uno
+    shci = log -1 --show-signature	# show commit, followed by the commit hash
+    tg = "!git tag -l *$1*"    # alias to allow using another pager
+    taglist = tag -l
+    usefullog = git log --oneline -5 --author cbeams --before "Fri Mar 26 2009"
+    wt = worktree
+    wtadd = "!echo git worktree add ../${PWD##*/}_$1 $1'\n' && git worktree add ../${PWD##*/}_$1 $1 #"
+    wtp = worktree prune
+    # Specific alias to check the 5 largest blobs in memory
+    space5 = "!git verify-pack -v .git/objects/pack/*.idx | sort -k 3 -n | tail -5"
+
+    # Space
+    # Which files are in this blob (blobid found with space), first arg is the blobid
+    blobfile = "!git rev-list --objects --all | grep $1 #"
+    # To clean the git repo and reduce its size
+    cl = "!git reflog expire --all && git gc --prune=now"
+
+# Put i or c or w whether it is on the index or commited or on the working directory
+[diff]
+    mnemonicPrefix = true
+
+# Clean up repo
+[gc]
+    reflogExpire = 1    #.day
+    pruneExpire = 5.days.ago
+
+# To get all regular expressions in a grep
+[grep]
+    extendedRegexp = true
+
+#print also what has been merged before conflict
+#[merge]
+#    conflictStyle = true
+
+# Clean the git conflict files that keeps the modification
+[mergetool]
+    keepBackup = false
+    keepTemporaries = false
+    prompt = false
+
+# To avoid conflicts if several people commit and push at the same time
+[pull]
+    rebase = true
+
+# To push only the current branch
+[push]
+    default = upstream
+
+[status]
+    relativePaths = true
+
+## Tips and tricks
+# git log -L<start>,<end>:FILE      # To log the lines modified for specific chunk
+# git status -sb                    # More concise
+# git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s
+# %Cgreen(%cr) %C(bold blue)<%an> %Creset' --abbrev-commit --date=relative
+# git grep 'time_t' -- '*.[ch]'     # grep for the method time_t in all the file *.c r *.h
+# git config --global help.autocorrect 10
+# git lfs prune -c                  # check if the copies of the files exist and remove the useless pointers to those files
+# git lfs clone                     # clone the pointers and checkout the pointers => faster
+# repo:<repo> is:pr module in:title # Search for all PR with module in title
+
+#PROBLEM
+# - when calling a function with the bash, the arguments were printed again
+# after the command
+#SOLUTION
+# - anonymous function
+    #fpr = "!f() { git fetch origin pull/$1/head:pr$1; }; f" # to fetch a PR
+# - calling bash with a command (we have to escape the quotes)
+    #fpr = "!sh -c \"git fetch origin pull/$1/head:pr$1\"" # to fetch a PR
+# - doesn't work each time but put an echo and an exec pattern $() in front of the command
+    #fpr = "!echo $(git fetch origin pull/$1/head:pr$1)" # to fetch a PR
+# - BEST Solution just put a # at the end, this comments the rest arriving after
+    #fpr = "!git fetch origin pull/$1/head:pr$1 #" # to fetch a PR

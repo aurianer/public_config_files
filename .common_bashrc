@@ -1,0 +1,69 @@
+#!/bin/bash -l
+# SET UP PROMPT
+PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] '
+PS1+="\[\033[1;33m\][⚡ \$(git branch 2>/dev/null | grep '^*' | cut -f2- -d ' ')]"
+set +u
+if [[ -z $SPACK_CXX ]]; then
+    PS1+=" \n\[\033[00m\]\$  "
+else
+    if [[ -z $SPACK_ENV ]]; then
+        PS1+="\[\033[1;33m\][spack env] \n\[\033[00m\]\$  "
+    else
+        PS1+="\[\033[1;33m\][spack ${SPACK_ENV##*/}] \n\[\033[00m\]\$  "
+    fi
+fi
+
+# To authorize ls **/*.hpp for example
+shopt -s globstar
+
+# don't put duplicate lines or lines starting with space in the history.
+export HISTCONTROL=ignoreboth
+# Put limits on bash history files
+export HISTSIZE=10000
+export HISTFILESIZE=20000
+# To make bash_history immediate (-a), clean to the size specified above (-c), push to history (-r)
+shopt -s histappend
+export PROMPT_COMMAND="history -a; history -c; history -r;$PROMPT_COMMAND"
+
+# Add git completion
+#source /usr/share/bash-completion/completions/git
+
+test -s ~/.alias && . ~/.alias || true
+
+# Cray link type (for daint)
+#export CRAYPE_LINK_TYPE=dynamic
+
+# Solve new terminal pb with ccmake
+export TERM=xterm
+
+export SRC_DIR=$HOME/projects
+export BUILD_DIR=$HOME/build
+export SCRIPT_DIR=$HOME/scripts
+export INSTALL_DIR=$HOME/install
+
+# Setup Ccache
+#export CCACHE_DIR=$INSTALL_DIR/ccache  # To set per machine not in common_bashrc
+#export CCACHE_MAXSIZE=8.0G # To set per machine not in common_bashrc
+export CCACHE_SLOPPINESS=pch_defines,time_macros    # To make it work with precompiled headers, etc.
+export CCACHE_COMPRESS
+export CCACHE_COMPRESSLEVEL=5
+# Makes ccache find the right compiler if spack is used otherwise just see the spack wrapper
+# export CMAKE_CXX_COMPILER_LAUNCHER=ccache
+# export CCACHE_COMPILERCHECK="%compiler% -v" # only necessary if not using spack's config:ccache:true
+
+# To prevent the passphrase prompt and have it in the terminal
+unset SSH_ASKPASS
+unset SSH_AUTH_SOCK
+
+export FCEDIT=vim
+
+if [[ -z $build_type ]]; then
+    build_type=Debug
+fi
+export pika_common_configure_extra_options="-GNinja -DCMAKE_BUILD_TYPE=${build_type} -DPIKA_WITH_COMPILER_WARNINGS=ON -DPIKA_WITH_COMPILER_WARNINGS_AS_ERRORS=ON -DPIKA_WITH_CHECK_MODULE_DEPENDENCIES=ON -DPIKA_WITH_EXAMPLES=ON -DPIKA_WITH_TESTS=ON"
+
+# Use Ctrl-X to expand the alias in the terminal
+bind '"\C-x": alias-expand-line'
+
+## To enable debug command in git
+#export GIT_TRACE=1

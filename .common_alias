@@ -1,0 +1,768 @@
+# Copyright (c) 2018    Auriane Reverdell
+#
+# SPDX-License-Identifier: BSL-1.0
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+# A file for new aliases and commands (makes the .bashrc much cleaner)
+
+
+###############################################################################
+# BASH
+#
+# To expand the aliases in the terminal press Ctrl-Alt-E (it does shell-expand-inline internally)
+alias cl=clear
+alias fd='fdfind'
+alias fd='fd --hidden'
+alias fdd='fd --type d --hidden' # Find only directories
+alias fdf='fd --type f --hidden --exclude .git' # Find only files
+alias fda='fd --type f -exec ls -la' # Find only files
+alias gi=git
+alias gti=git
+alias grep='grep --color=always'
+alias htop='htop -u $USER'
+alias l='ls -l'
+alias ls='ls --color=auto -A -h'
+alias list_uid_min_max="grep -E '^UID_MIN|^UID_MAX' /etc/login.defs"
+#alias list_users="getent passwd {$(grep -E '^UID_MIN' /etc/login.defs | cut -f2 -d' ')..60000}"
+alias list_users='compgen -u'
+alias list_group='compgen -g'
+alias nm='nm -A'
+alias pd='pushd'
+alias psa='ps aux | grep'
+alias proc_nb='cat /proc/cpuinfo | grep proc | wc -l'
+alias sl=ls
+alias sc=source
+alias ta='vim -t'   # To jump directly to the definition
+# Open multiple files on the same line in vim
+alias vim='vim -o'
+alias vmi='vim -o'
+alias ivm='vim -o'
+alias vimo='vim -o'
+alias ctest_print='ctest --show-only'
+# To get both staged and unstaged files
+alias vimf='vim -o $(git diff --name-only --relative | head -n1)'
+alias vimfs='vim -o $(git diff --name-only --cached --relative | head -n1)' # Staged files
+alias vimfa='vim -o $(git diff --name-only --cached --relative | head -n1) $(git diff --name-only --relative | head -n1)' # All files
+# open the output of the last command
+alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
+alias ta='vim -t'   # Find a specific tag definition
+# To clear when yubikey not recognized
+alias clear_gpg='echo RELOADAGENT | gpg-connect-agent'
+alias list_groups_user="groups $USER"
+alias add_user_to_group='sudo usermod -aG $GROUP $USER'
+alias remove_user_from_group='sudo gpasswd -d $USER $GROUP'
+alias change_user_prim_group='sudo usermod -g $GROUP $USER'
+alias switch_user='su -l'
+alias print_host_fingerprint='ssh-keygen -l -f /etc/ssh/ssh_host_ed25519_key.pub'
+
+# NETWORK
+alias wifi='nmcli d wifi'
+alias i='ip -c -br a'   # List the IP addresses on the network
+alias scan_devices='echo sudo nmap -sn 192.168.1.0/24 && sudo nmap -sn 192.168.1.0/24' # scan devices on the network
+alias calc='bc -l'
+alias srunhw='srun --showhw'
+alias set_back_acl="setfacl -R -b" # Add the dir
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
+# SPACK
+alias sp=spack
+alias spf='spack find --long'
+alias spfd='spack find --deps'
+alias spbl='spack config blame packages'
+alias sp_list='spack find --loaded'  # Find which package is loaded
+alias sp_avail='spack location -i'   # print versions installed
+alias sp_purge='spack gc'    # uninstall unused dependencies
+alias sp_add_compiler='spack compiler find' # Add new compilers from modules loaded
+alias sp_comp_list='spack compiler list'
+function spload {
+    spack load "$@" arch=$(spack arch)
+}
+function sp_debug {
+    spack -d -v "$@"
+}
+# Spack environment
+alias sp_env_create='spack env create'
+# Edit config
+function sp_env_edit() {
+    spack -e $1 config edit
+}
+alias sp_env_list="spack env list"
+function sp_env_concretize() {
+    spack -e $1 concretize -f
+}
+function sp_env_install() {
+    spack -e $1 install
+}
+function sp_build_env() {
+    if [[ $# != 0 ]]; then
+        first_arg=$1
+        shift # skip the first arg
+        echo "spack -e $first_arg build-env $@ -- $SHELL"
+        spack -e $first_arg build-env $@ -- $SHELL
+    else
+        usage_func 'spack -e <env> build-env <spec> -- $SHELL'
+    fi
+}
+
+# ls after each cd
+function cd {
+    builtin cd "$@" && ls
+}
+
+# Check memory in the directory
+function check_mem {
+    if [[ $# != 0 ]]; then
+        du -d1 -h $@
+    else
+        du -d1 -h $PWD
+    fi
+}
+
+# Cut the first argument with : delimiter
+function cut_col {
+    cut -d':' -f1 | sort -u
+}
+
+# Cut the first argument with space delimiter
+function cut_space {
+    cut -d' ' -f1 | sort -u
+}
+
+# Compare 2 strings (use case for rsa finger prints)
+function cmp {
+    if [[ $# -lt 2 ]]; then
+        echo "There must be 2 string arguments to compare them!"
+    else
+        echo $1 > first_key.tmp
+        echo $2 > second_key.tmp
+        echo "diff result:"
+        diff first_key.tmp second_key.tmp
+        rm first_key.tmp second_key.tmp
+    fi
+}
+
+function which_package {
+    dpkg -S $(whereis $1)
+}
+
+function compiler_options_supported {
+    $1 -### /dev/null
+}
+
+function diff_string {
+    if [[ $# != 2 ]]; then
+        echo "Error: this function must have exactly 2 arguments"
+    else
+        echo $1 > first_file.tmp
+        echo $2 > second_file.tmp
+        #echo "The diff between the 2 strings is:"
+        if [[ "$(diff first_file.tmp second_file.tmp)" = "" ]]; then
+            echo "OK"
+        else
+            echo "ERROR: the strings don't match"
+        fi
+        rm first_file.tmp second_file.tmp
+    fi
+}
+
+# Currently using the rust fd package
+## Globbing find command (optionally opening the file found)
+#function fd() {
+#    # if the last argument specified is an -o, we open the file
+#    if [[ "${!#}" = "-o" ]]; then
+#        vim $(find . -iname "*$1*")
+#    fi
+#    if [[ "$#" != 0 ]]; then
+#        find . -iname "*$1*"
+#    fi
+#}
+
+function cdf() {
+    dirs=$(fc -s)   # on mac_os with zsh it would be vim $(fc -e -)
+    cd $(echo $dirs | cut -f1 -d' ')
+}
+
+function cdl() {
+    dirs=$(fc -s)   # on mac_os with zsh it would be vim $(fc -e -)
+    cd $(echo $dirs | tr ' ' '\n' | tail -1)
+}
+
+# Find matching
+# TODO: replace with fd equivalents
+function fdm() {
+    # if the last argument specified is an -o, we open the file
+    if [[ "${!#}" = "-o" ]]; then
+        vim $(find . -iname $1)
+    fi
+    if [[ "$#" != 0 ]]; then
+        find . -iname $1
+    fi
+}
+
+# Find with the regex option
+function fdr() {
+    # if the last argument specified is an -o, we open the file
+    if [[ "${!#}" = "-o" ]]; then
+        vim $(find . -regextype posix-extended -regex ".*$1.*\.(cpp|hpp)")
+    fi
+    if [[ "$#" != 0 ]]; then
+        find . -regextype posix-extended -regex ".*$1.*\.(cpp|hpp|c|h)"
+    fi
+}
+
+function files() {
+    fc -s | cut -d':' -f1 | uniq
+}
+
+
+function generate_tags() {
+    ctags -R --exclude=.git .
+}
+
+function gp() {
+    # Ignore case
+    # Avoid binary files
+    #rg --vimgrep --hidden --no-ignore --ignore-case --color=always --ignore-file=tags "$@"
+    grep -rIin "$@" --exclude=tags --exclude-dir=\.git --exclude=compile_commands.json --color=auto
+}
+
+function gpc() {
+    # Match case
+    # Avoid binary files
+    #rg --vimgrep --hidden --no-ignore --case-sensitive --color=always --ignore-file=tags "$@"
+    grep -rnI "$@" --exclude=tags --exclude-dir=\.git --color=auto
+}
+
+function gpa() {
+    # Ignore case
+    # Include binary files
+    #rg --vimgrep --hidden --no-ignore --ignore-case --color=always --binary --ignore-file=tags "$@"
+    grep -rin "$@"  --color=auto
+}
+
+function gpe() {
+    egrep -rIin "$@" --exclude=tags --exclude-dir=\.git --color=auto
+}
+
+function gpec() {
+    egrep -rIn "$@" --exclude=tags --exclude-dir=\.git --color=auto
+}
+
+# To grep a function
+function gpf() {
+    grep -rIin " $@(" --exclude=tags --exclude-dir=\.* --color=auto
+}
+
+# Grep only cpp, hpp and related files
+function gpp() {
+    grep -rIin "$@" --include=\*.{cpp,hpp,hh,cc,h,c} --color=auto
+}
+
+function gpsh() {
+    grep -rIin "$@" --include=\*.sh --color=auto
+}
+
+# Grep only cpp, hpp and related files with case match
+function gppc() {
+    grep -rIn "$@" --include=\*.{cpp,hpp,hh,cc,h,c} --color=auto
+}
+
+# Grep only cmake related files
+function gpcmake() {
+    grep -rIin "$@" --include=CMakeLists.txt --color=auto
+    grep -rIin "$@" --include=\*.cmake --color=auto
+}
+
+# Grep only cmake related files but matching case
+function gpcmakec() {
+    grep -rIn "$@" --include=CMakeLists.txt --color=auto
+    grep -rIn "$@" --include=\*.cmake --color=auto
+}
+
+# Grep excluding the tests/ directories
+function gp-exclude() {
+    grep -rIin "$@" --color=auto --exclude=tags --exclude-dir=\.* \
+        --exclude-dir={cmake,test,example,doc}*
+}
+
+# Grep recursively on the includes
+function gpinc() {
+    if [[ "$1" =~ ".h" ]] || [[ "$1" =~ ".c" ]]; then
+        sequence1="include.*$1\>"
+        sequence2="include.*$1\""
+    else
+        sequence1="include.*$1.*h.*\>"
+        sequence2="include.*$1.*h.*\""
+    fi
+    # Exclude binary files and the file with vim tags
+    grep -rnI $sequence1 --include=*.{hpp,cpp,c,h} --color=auto
+    # A second grep to find the include with ""
+    grep -rnI $sequence2 --include=*.{hpp,cpp,c,h} --color=auto
+}
+
+# Grep a specific type for ex: gp thread_executors *.txt
+function gptype() {
+    # same as gp but for a specific filetype
+    grep -rIin "$1" --exclude=tags --color=auto --exclude-dir=\.* **/*${2}
+}
+
+# Grep a specific type for ex: gpc thread_executors *.txt
+function gptypec() {
+    # same as gp but for a specific filetype with matching case
+    grep -rIn "$1" --exclude=tags --color=auto --exclude-dir=\.* **/*${2}
+}
+
+function gpl() {
+    # we concatenate the arguments with globbing between them
+    regexp=""
+    for arg in "$@"
+    do
+        regexp="${regexp}.*${arg}"
+    done
+    # Exclude binary
+    grep -rnI "$regexp" --exclude=tags --color=auto
+}
+
+# Grep the argument and isolate the filenames of the result
+function gpfiles() {
+    # Exclude binary files
+    grep -rIin "$@" --exclude=tags --color=auto | cut -d':' -f1 | uniq
+}
+
+function isolate_files() {
+    fc -s | cut -f1 -d: | sort -u
+}
+
+function isolate_files_to_file() {
+    fc -s | cut -f1 -d: | sort -u > files_$1.txt
+    echo "Wrote files to file_${1}.txt"
+}
+
+function replace() {
+    if [[ "$#" != 0 ]]; then
+        sed "s/$1/$2/" $3
+    else
+        echo 'sed <regex_to_replace> <replacement> <file>'
+    fi
+}
+
+# Install python modules in global environment (i.e. different from virtual env)
+function install_python_modules() {
+    python3 -m pip install "$@"
+}
+
+# Execute python inline
+function pyexec() {
+    python3 -c "$@"
+}
+
+# last command will call command on the output of the previous command
+function last() {
+    $@ $(fc -s)
+}
+
+# List the files globbing & one file per line
+function lsahpp() {
+    if [[ "$1" == "" ]]; then
+        ls -l **/*.hpp | rev | cut -d' ' -f1 | rev
+    else
+        ls -l ${1}/**/*.hpp | rev | cut -d' ' -f1 | rev
+    fi
+}
+
+# List the files globbing & one file per line
+function lsacpp() {
+    if [[ "$1" == "" ]]; then
+        ls -l **/*.cpp | rev | cut -d' ' -f1 | rev
+    else
+        ls -l ${1}/**/*.cpp | rev | cut -d' ' -f1 | rev
+    fi
+}
+
+# LS with globbing
+function lsg() {
+    ls **/*${1}
+}
+
+function print_date() {
+    printf "%(%d-%m-%Y)T\n" $EPOCHSECONDS
+}
+
+function print_time() {
+    printf "%(%H:%M:%S)T\n" $EPOCHSECONDS
+}
+
+# ssh with the same local path
+function sshp() {
+    ssh $1 -t "cd $PWD;bash"
+}
+
+# Create ssh keys with RSA
+function sshkg_rsa() {
+    if [[ "$#" != 0 ]]; then
+        ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa_${1} -C "$1"
+    else
+        usage_func "$FUNCNAME <key_name>"
+    fi
+}
+
+# Create ssh keys with edward curve
+function sshkg_curve() {
+    if [[ "$#" != 0 ]]; then
+        # -o: new OpenSSH format for private key instead of PEM format (default
+        # for ed25519)
+        # -a 256: nb of Key Derivation Function rounds (higher result in slower
+        # passphrase verif but increase the resistance to brute force password
+        # cracking)
+        # default length is 256 bits, no need to set it
+        ssh-keygen -o -a 256 -t ed25519 -f ~/.ssh/id_ed25519_${1}  -C "$1"
+    else
+        usage_func "$FUNCNAME <key_name>"
+    fi
+}
+
+alias ssh_fp='ssh-keygen -l -f'
+
+# Copy the ssh key on the server
+function sshcopy_rsa() {
+    if [[ "$#" != 0 ]]; then
+        ssh-copy-id -i ~/.ssh/id_rsa_${1}.pub "$2"
+    else
+        usage_func "$FUNCNAME <key_name_extension> <server_name>"
+    fi
+}
+
+# Copy the ssh key on the server
+function sshcopy_curve() {
+    if [[ "$#" != 0 ]]; then
+        ssh-copy-id -i ~/.ssh/id_ed25519_${1}.pub "$2"
+    else
+        usage_func "$FUNCNAME <key_name_extension> <server_name>"
+    fi
+}
+
+# allow globbing in vim
+function vi() {
+    vim -o **/*$1*
+}
+
+function viml() {
+    # Can do vim $(!!) if directly in the terminal
+    vim -o $(fc -s)   # on mac_os with zsh it would be vim $(fc -e -)
+}
+
+function vlast() {
+    vim -o $(git diff --name-only | tail -1)
+}
+
+function vlasts() {
+    vim -o $(git diff --name-only | tail -$1)
+}
+
+function vfirst() {
+    vim -o $(git diff --name-only | head -1)
+}
+
+function vfirsts() {
+    vim -o $(git diff --name-only | head -$1)
+}
+
+function vimcut() {
+    # Can do vim $(!!) if directly in the terminal
+    fc -s | cut -f1 -d: | uniq > files_to_open # on mac_os with zsh it would be vim $(fc -e -)
+    vim -o $(cat files_to_open)
+    rm files_to_open
+}
+
+# open the files of the output of a grep
+function vimgp() {
+    # Can do vim $(!!) if directly in the terminal
+# TODO: remove the colors of the previous command otherwise weird filename
+    TERM=xterm-mono fc -s | cut -f1 -d: | uniq > tmp_file
+    vim -o $(cat tmp_file)
+    rm tmp_file
+}
+
+# Same function, different alias
+function open_gp() {
+    # Can do vim $(!!) if directly in the terminal
+    fc -s | cut -f1 -d: | uniq > tmp_file
+    vim -o $(cat tmp_file)
+    rm tmp_file
+}
+
+
+#function vimfirst() {
+#    # Can do vim $(!!) if directly in the terminal
+#    vim $(fc -s) | head -n1   # on mac_os with zsh it would be vim $(fc -e -)
+#}
+#
+#function vimlast() {
+#    # Can do vim $(!!) if directly in the terminal
+#    vim $(fc -s) | tail -n1   # on mac_os with zsh it would be vim $(fc -e -)
+#}
+
+function vimline() {
+    vim +$2 $1
+}
+
+# open a previously saved session
+function vims() {
+    vim -S **/session*$1*.vim
+}
+
+# Clear bashrc history
+function clear_history() {
+    cat /dev/null > ~/.bash_history && history -c
+}
+
+# kill a specific process (obsolete now that pkill is avail almost everywhere)
+function killp() {
+    #jobid=$(ps | grep -i $1 | awk '{print $1}')
+    jobid=$(pgrep $1 | head -n1)
+    echo "kill proc $jobid"
+    kill $jobid
+}
+
+function kill9() {
+    jobid=$(ps | grep -i $1 | awk '{print $1}')
+    echo "force kill proc $jobid"
+    kill -9 $jobid
+}
+
+# Add a new search path to the env var PATH
+function add_path() {
+    export PATH="$PATH:$1"
+}
+
+# Determine the size of all the subdirectories of the directory specified
+function size_dir() {
+    if [[ "$#" != 0 ]]; then
+        du -h $1 --max-depth=1 | sort -hr
+    else
+        # If no argument specified, we do it in the current dir
+        du -h . --max-depth=1 | sort -hr
+    fi
+}
+
+# END BASH
+###############################################################################
+
+
+###############################################################################
+# PYTHON
+#alias pyvenv='python3 -m venv'
+alias pyvenv='python3.9 -m venv'
+# Conda
+alias condaenv='conda create -n cffi_env python=3.9'
+
+function error_missing_args() {
+	echo "Error. No arguments passed can't ${1}"
+}
+
+function usage_func() {
+	printf "${RED}Usage :${NC}"
+	echo "	${1}"
+}
+
+function create_venv() {
+    if [[ "$#" == 0 ]]; then
+	error_missing_args "${FUNCNAME}"
+	usage_func "${FUNCNAME} <env_name>"
+    else
+	python3 -m venv ~/virtual_envs/${1}
+	echo "${1} environment created"
+    fi
+}
+
+function activate() {
+    if [[ "$#" == 0 ]]; then
+	error_missing_args "${FUNCNAME}"
+	usage_func "${FUNCNAME} <env_name>"
+    else
+	source ~/virtual_envs/${1}/bin/activate && \
+        echo "${1} environment activated"
+    fi
+}
+# END PYTHON
+###############################################################################
+
+
+###############################################################################
+# MAKE
+alias mk=make
+
+function mkf() {
+    if [[ "$#" == 0 ]]; then
+	error_missing_args "${FUNCNAME}"
+	usage_func "${FUNCNAME} <makefile_extension>"
+    else
+        make -f makefile.${1}
+    fi
+}
+###############################################################################
+
+
+###############################################################################
+# DEBUG
+alias gdba='gdb --args'
+alias val='valgrind'
+alias valmem='valgrind --leak-check=full --show-leak-kinds=all'
+alias valgdb='valgrind --vgdb=full --vgdb-error=0'
+alias valmemgdb='valgrind --leak-check=full --show-leak-kinds=all --vgdb=full --vgdb-error='
+###############################################################################
+
+###############################################################################
+# ENV
+function setup_env() {
+    # To load the modules for a specific project
+    . $HOME/setup_env/setup_${1}.sh
+}
+###############################################################################
+
+
+###############################################################################
+# CHECKSUMS
+
+# Checksum the file you downloaded and compare it to the reference sha passed as
+# an argument
+function checksha_old() {
+    if [ "$#" -lt 2 ]; then
+        echo "Use: checksha <file_to_check> <reference_sha>"
+        return
+    fi
+    sha256sum $1 | awk '{print $1}' > sha_file.txt
+    echo "$2" > sha_ref.txt
+    if [[ "$3" != "--no-print" ]]; then
+        echo "diff sha_file.txt sha_ref.txt:"
+    fi
+    diff sha_file.txt sha_ref.txt
+    rm sha_file.txt sha_ref.txt
+}
+
+function printsha() {
+    if [ "$#" -lt 1 ]; then
+        echo "Use: $FUNCNAME <file_to_check>"
+        return
+    fi
+    sha256sum $1 | awk '{print $1}'
+}
+
+function checksha() {
+    if [ "$#" -lt 2 ]; then
+        echo "Use: $FUNCNAME <file_to_check> <reference_sha>"
+        return
+    fi
+    dir=$(dirname $1)
+    file=$(basename $1)
+    pushd $dir > /dev/null
+        reference_sha=$2
+        echo "$reference_sha *$file" | sha256sum --check
+    popd > /dev/null
+}
+
+# Checksum the file you downloaded and compare it to the reference sha passed as
+# an argument
+function checkmd5() {
+    if [ "$#" -lt 2 ]; then
+        echo "Use: checksha <file_to_check> <reference_sha>"
+    fi
+    md5sum $1 | awk '{print $1}' > sha_file.txt
+    echo "$2" > sha_ref.txt
+    echo "diff sha_file.txt sha_ref.txt:"
+    diff sha_file.txt sha_ref.txt
+    rm sha_file.txt sha_ref.txt
+}
+
+function perf_analysis() {
+    # Depending on where you built the test you might need to use -o for output
+    # file and -i for input file, and adjust -FN to a number where you don't see
+    # much overhead compared to not using perf
+    perf record -F99 --call-graph dwarf ./test && perf report
+}
+
+function prepend() {
+    # Usage: $ prepend PATH $(spack location hwloc@2.6.0)
+    # Will prepend the hwloc path in front of the PATH env variable
+    eval export $1=$2:\$$1
+}
+
+function append() {
+    # Usage: $ append PATH $(spack location hwloc@2.6.0)
+    # Will append the hwloc path at the end of the PATH env variable
+    eval export $1=\$$1:$2
+}
+
+function ps_port() {
+    lsof -ti:${1}
+}
+
+function kill_ps_port() {
+    lsof -ti:${1} | xargs kill -9
+}
+
+# Debug
+function repeat-until-failure {
+    counter=1
+    while [ 1 ]; do date && echo try \#${counter} && $@ || break; counter=$((counter+1)); done
+}
+
+# GPG key generation
+alias gpgcreate='gpg --full-generate-key'
+
+###############################################################################
+
+# Go to the allocated node
+function node() {
+    if [[ $__SYSTEM_NAME == daint ]]; then
+        nodename=$(squeue -u $USER -l | awk '{print $9}' | awk '/node/{getline; print}')
+    elif [[ $__SYSTEM_NAME == hohgant ]]; then
+        nodename=$(squeue -u $USER -l | awk '{print $9}' | tail -n1)
+    fi
+    echo "node name : $nodename"
+    ssh $nodename -t "cd $pwd;bash"
+}
+# Same as node but conserves the bash
+function go_to_node() {
+    srun --pty bash
+}
+
+# Include all unit tests except algorithms
+function compile_all_unit_tests() {
+    ninja -j4 -k 0 \
+        $(ninja help | grep '^tests.unit.modules\.' | awk -F':' '{ print $1 }')
+}
+
+function compare_strings() {
+    if [[ $# -lt 2 ]]; then
+        echo "Needs at least two operands to compare them."
+    elif [[ $1 == $2 ]]; then
+        echo "OK"
+    else
+        echo "/!\ different operands."
+    fi
+
+}
+
+function remote_add() {
+    if [[ $# -lt 1 ]]; then
+        remote_name=aurianer
+    else
+        remote_name=$1
+    fi
+    # Use of ANSI C quoting otherwise tab doesn't work
+    url=$(git rv | grep origin | head -1 | cut -d$'\t' -f2 | cut -d' ' -f1 | sed -E "s/:(.*)\//:$remote_name\//")
+    git remote add $remote_name $url
+}
+###############################################################################
+
+
+
+###############################################################################
+# CLEAR
+# unset <var>
+# unset -f <function>
+# unalias <alias>
+###############################################################################
