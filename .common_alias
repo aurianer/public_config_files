@@ -41,9 +41,22 @@ alias ivm='vim -o'
 alias vimo='vim -o'
 alias ctest_print='ctest --show-only'
 # To get both staged and unstaged files
-alias vimf='vim -o $(git diff --name-only --relative | head -n1)'
+#alias vimf='vim -o $(git diff --name-only --relative | head -n1)' # modified files
+# TODO: make a function that open staged files only if modified files are empty
 alias vimfs='vim -o $(git diff --name-only --cached --relative | head -n1)' # Staged files
 alias vimfa='vim -o $(git diff --name-only --cached --relative | head -n1) $(git diff --name-only --relative | head -n1)' # All files
+alias valgrind_cmd='valgrind  --error-exitcode=1 --leak-check=full --fair-sched=yes --gen-suppressions=all' # --suppressions=$HOME/projects/pika_valgrind/tools/valgrind/memcheck.supp
+#unset -f vimfa
+#function vimfa {
+#   staged_files=$(git diff --name-only --cached --relative | head -n1)
+#   modified_files=$(git diff --name-only --relative | head -n1)
+#   #list=($staged_files $modified_files)
+#   list=($staged_files)
+#   list+=($modified_files)
+#   echo "$(uniq ${list[@]})"
+#   ##vim -o $(cat /tmp/files | uniq)
+#}
+alias vimf=vimfa
 # open the output of the last command
 alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
 alias ta='vim -t'   # Find a specific tag definition
@@ -55,6 +68,9 @@ alias remove_user_from_group='sudo gpasswd -d $USER $GROUP'
 alias change_user_prim_group='sudo usermod -g $GROUP $USER'
 alias switch_user='su -l'
 alias print_host_fingerprint='ssh-keygen -l -f /etc/ssh/ssh_host_ed25519_key.pub'
+alias hwloc_graph_print_binding='hwloc-bind core:0-2 -- lstopo --pid 0'
+alias nvidia_smi='nvidia-smi --help-query-gpu'
+alias spack_add_latest_version='spack checksum --latest --add-to-package'
 
 # NETWORK
 alias wifi='nmcli d wifi'
@@ -726,8 +742,11 @@ function node() {
 }
 # Same as node but conserves the bash
 function go_to_node() {
-    srun --pty bash
+    #srun --pty bash # this works only on the bash of the allocation simple
+    _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
+    srun --jobid=$_jobid --overlap --pty bash
 }
+
 
 # Include all unit tests except algorithms
 function compile_all_unit_tests() {
