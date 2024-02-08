@@ -55,6 +55,7 @@
 [color "branch"]
     remote = yellow
 
+# Note: many aliases have a # at the end, the args $@ are put at the end again it's to comment that
 [alias]
     # We sometimes use anonymous functions to alias otherwise we get the parameters
     addf = "!git add $(git diff --name-only --relative | head -n1)" # Add the first modified file
@@ -87,7 +88,7 @@
     disname = diff --staged --name-only
     dip = diff HEAD~1
     dis = diff --staged
-    dl = "!git push $1 --delete $2 && git branch -d $2"
+    dl = "!git push --delete $1 $2 && git branch -d $2 #"
     dlb = branch -d
     dlbf = branch -D
     fa = fetch --all
@@ -117,6 +118,7 @@
     patch = !git diff $1 $2 > diff.patch    # Create a patch out of a diff
     app = !git apply diff.patch         # apply it to the current state, useful with spack patches
     pushf = push --force-with-lease
+    puhsf = pushf
     rb = rebase -i
     rba = rebase --abort
     rbc = rebase --continue
@@ -149,6 +151,8 @@
     blobfile = "!git rev-list --objects --all | grep $1 #"
     # To clean the git repo and reduce its size
     cl = "!git reflog expire --all && git gc --prune=now"
+    rp = remote prune   # prune remote tracking deleted branches
+    rps = branch -dr    # Delete individual remote tracking branch
 
 # Put i or c or w whether it is on the index or commited or on the working directory
 [diff]
