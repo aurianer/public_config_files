@@ -815,7 +815,13 @@ function remote_add() {
 }
 ###############################################################################
 
-
+# SLURM
+# Cancels the first jobs prompting when doing squ
+function cancel() {
+    jobid=$(squ | awk '{print $1}' | awk '/JOBID/{getline; print}')
+    echo "cancel jobid $jobid"
+    scancel $jobid
+}
 
 ###############################################################################
 # CLEAR
