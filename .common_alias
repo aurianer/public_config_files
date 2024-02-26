@@ -43,6 +43,7 @@ alias ctest_print='ctest --show-only'
 # TODO: make a function that open staged files only if modified files are empty
 alias vimfs='vim -o $(git diff --name-only --cached --relative | head -n1)' # Staged files
 alias vimfa='vim -o $(git diff --name-only --cached --relative | head -n1) $(git diff --name-only --relative | head -n1)' # All files
+alias valgrind_cmd='valgrind  --error-exitcode=1 --leak-check=full --fair-sched=yes --gen-suppressions=all' # --suppressions=$HOME/projects/pika_valgrind/tools/valgrind/memcheck.supp
 alias vimf=vimfa
 # open the output of the last command
 alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
