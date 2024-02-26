@@ -88,7 +88,7 @@
     disname = diff --staged --name-only
     dip = diff HEAD~1
     dis = diff --staged
-    dl = "!git push --delete $1 $2 && git branch -d $2 #"
+    dl = "!git push --delete aurianer $1; git branch -D $1 #" # Cannot push --delete several branches
     dlb = branch -d
     dlbf = branch -D
     fa = fetch --all
