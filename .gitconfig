@@ -134,7 +134,7 @@
     rshf = checkout HEAD --     # reset --hard a single file
     rv = remote -vv
     squ = commit --squash
-    st = status
+    st = "!if [[ $PWD =~ spack ]]; then git status -uno; else git status; fi" # if spack dir ignore untracked files many packages
     stf = status -uno
     shci = log -1 --show-signature	# show commit, followed by the commit hash
     shsha = "!git rev-parse ${1:-HEAD} #"          # show full hash of the commit
