@@ -20,6 +20,11 @@ function check_if_exist_and_link() {
         ln -s $cloned_dir/.$1 ~/.$1
         popd > /dev/null
     fi
+    # Compare the backup and the new file, deletes the backup if identical
+    diff -q ~/.$1 ~/.$1.bkp > /dev/null
+    if [[ $? == 0 ]]; then
+        rm ~/.$1.bkp
+    fi
 }
 
 cloned_dir=$PWD
