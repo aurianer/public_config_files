@@ -27,6 +27,7 @@ alias list_uid_min_max="grep -E '^UID_MIN|^UID_MAX' /etc/login.defs"
 #alias list_users="getent passwd {$(grep -E '^UID_MIN' /etc/login.defs | cut -f2 -d' ')..60000}"
 alias list_users='compgen -u'
 alias list_group='compgen -g'
+alias mkdir='mkdir -p'
 alias nm='nm -A'
 alias pd='pushd'
 alias psa='ps aux | grep'
@@ -723,16 +724,28 @@ alias gpgcreate='gpg --full-generate-key'
 
 # Go to the first allocated node
 function node() {
-    _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
+    if [[ $# -lt 1 ]]; then
+        _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
+    else
+        _jobid=$1
+    fi
     srun --jobid=$_jobid --overlap --pty bash
 }
-# Same as node but conserves the bash
-function go_to_node() {
-    #srun --pty bash # this works only on the bash of the allocation simple
-    _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
+function nodel() {
+    if [[ $# -lt 1 ]]; then
+        _jobid=$(squeue -u $USER | awk '{print $1}' | tail -n1)
+    else
+        _jobid=$1
+    fi
     srun --jobid=$_jobid --overlap --pty bash
 }
 
+function spack_edit_package() {
+    if [[ -z $SPACK_ROOT ]]; then
+        echo "please set SPACK_ROOT"; return
+    fi
+    cd $SPACK_ROOT/var/spack/repos/builtin/packages
+}
 
 # Include all unit tests except algorithms
 function compile_all_unit_tests() {
