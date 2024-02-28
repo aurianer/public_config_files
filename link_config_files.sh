@@ -3,10 +3,11 @@
 set -ux
 
 function append_to_config() {
-    grep common_$1 ~/.$1 > /dev/null
-    contains_common=$?
-    if [[ $contains_common != 0 ]]; then
-        echo "if [ -f ~/.common_$1 ]; then . ~/.common_$1; fi" >> ~/.$1
+    what_to_link=${2:-common_$1}
+    grep $what_to_link ~/.$1 > /dev/null
+    already_appended=$?
+    if [[ $already_appended != 0 ]]; then
+        echo "if [ -f ~/.$what_to_link ]; then . ~/.$what_to_link; fi" >> ~/.$1
     fi
 }
 
