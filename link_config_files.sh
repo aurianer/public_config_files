@@ -25,6 +25,11 @@ function check_if_exist_and_link() {
     if [[ $? == 0 ]]; then
         rm ~/.$1.bkp
     fi
+    # Compare the backup and the new file, deletes the backup if identical
+    diff -q ~/.$1 ~/.$1.bkp > /dev/null
+    if [[ $? == 0 ]]; then
+        rm ~/.$1.bkp
+    fi
 }
 
 cloned_dir=$PWD
