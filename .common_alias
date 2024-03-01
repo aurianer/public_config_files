@@ -64,6 +64,14 @@ alias hwloc_graph_print_binding='hwloc-bind core:0-2 -- lstopo --pid 0'
 alias nvidia_smi='nvidia-smi --help-query-gpu'
 alias spack_add_latest_version='spack checksum --latest --add-to-package'
 
+# Format spack package, might need to load python environment with
+# $SPACK_ROOT/.github/workflows/style/requirements.txt installed
+function format_spack_package() {
+    . $SPACK_ROOT/share/spack/setup-env.sh
+    trimmed_package=$(echo $1 | tr -d ' ')
+    spack style $SPACK_ROOT/var/spack/repos/builtin/packages/$trimmed_package
+}
+
 # NETWORK
 alias wifi='nmcli d wifi'
 alias i='ip -c -br a'   # List the IP addresses on the network
@@ -561,8 +569,7 @@ function size_dir() {
 
 ###############################################################################
 # PYTHON
-#alias pyvenv='python3 -m venv'
-alias pyvenv='python3.9 -m venv'
+alias pyvenv='python3 -m venv'
 # Conda
 alias condaenv='conda create -n cffi_env python=3.9'
 
