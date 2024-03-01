@@ -134,7 +134,11 @@
     rshf = checkout HEAD --     # reset --hard a single file
     rv = remote -vv
     squ = commit --squash
-    st = "!if [[ $PWD =~ spack ]]; then git status -uno; else git status; fi" # if spack dir ignore untracked files many packages
+    # Alias executed for top level dir, need to add GIT_PREFIX
+    # https://git-scm.com/docs/git-config/2.1.4#Documentation/git-config.txt-alias
+    st = "!cd ${GIT_PREFIX:-.} && if [[ $PWD =~ spack ]]; then git status -uno; else git status; fi"
+    configlist="!git config -l"
+    #st = status
     stf = status -uno
     shci = log -1 --show-signature	# show commit, followed by the commit hash
     shsha = "!git rev-parse ${1:-HEAD} #"          # show full hash of the commit
