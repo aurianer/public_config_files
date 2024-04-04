@@ -776,14 +776,19 @@ function compare_strings() {
 }
 
 function remote_add() {
-    if [[ $# -lt 1 ]]; then
-        remote_name=aurianer
+    remote_name=${1:-aurianer}
+    url=$(git remote -v | grep -o origin.*.git | awk '{print $2}')
+    echo $url | grep -q https # check if origin url is in https
+    is_ssh=$?
+    if [[ $is_ssh == 0 ]]; then
+        # convert https url into ssh
+        new_url=$(echo $url | sed -E "s/.*github.com\/(.*)\/(.*)/git@github.com:$remote_name\/\2/")
     else
-        remote_name=$1
+        new_url=$(echo $url | sed -E "s/:(.*)\//:$remote_name\//")
     fi
-    # Use of ANSI C quoting otherwise tab doesn't work
-    url=$(git rv | grep origin | head -1 | cut -d$'\t' -f2 | cut -d' ' -f1 | sed -E "s/:(.*)\//:$remote_name\//")
-    git remote add $remote_name $url
+    ## Use of ANSI C quoting otherwise tab doesn't work
+    #url=$(git rv | grep origin | head -1 | cut -d$'\t' -f2)
+    git remote add $remote_name $new_url
 }
 ###############################################################################
 
