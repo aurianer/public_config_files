@@ -50,6 +50,8 @@ alias vimf=vimfa
 alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
 alias ta='vim -t'   # Find a specific tag definition
 
+alias notify="zenity --info --text=\"Job finished\""
+
 alias valgrind_cmd='valgrind  --error-exitcode=1 --leak-check=full --fair-sched=yes --gen-suppressions=all' # --suppressions=$HOME/projects/pika_valgrind/tools/valgrind/memcheck.supp
 
 # To clear when yubikey not recognized
@@ -67,9 +69,11 @@ alias spack_add_latest_version='spack checksum --latest --add-to-package'
 # Format spack package, might need to load python environment with
 # $SPACK_ROOT/.github/workflows/style/requirements.txt installed
 function format_spack_package() {
+    activate format_spack_pr
     . $SPACK_ROOT/share/spack/setup-env.sh
     trimmed_package=$(echo $1 | tr -d ' ')
     spack style $SPACK_ROOT/var/spack/repos/builtin/packages/$trimmed_package
+    deactivate
 }
 
 # NETWORK

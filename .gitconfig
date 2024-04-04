@@ -102,7 +102,12 @@
     fix = commit --fixup
     fxi = commit --fixup
     fo = log --graph --oneline --decorate --follow -- # Find which commit modify a certain file
-    fof = "!git log --graph --oneline --decorate --follow -- $(git diff --name-only | head -n1) $(git diff --staged --name-only | head -n1)" # fo but with first modified file
+    fof = "!f() {\
+        first_staged_file=$(git diff --staged --name-only | head -n1); \
+        first_modified_file=$(git diff --name-only | head -n1); \
+        file=${first_staged_file:-${first_modified_file}}; \
+        echo \"following file: $file\"; \
+        git log --graph --oneline --decorate --follow -- $file; }; f"
     follow = log --graph --oneline --date=short --pretty=format:'%C(auto)%h%d %s %C(blue)%cd' --follow -- # Find which commit modify a certain file
     followfull = log --graph --oneline --decorate --date=short --follow -- # No pager used
     gp = !git grep $1 $(git rev-list --all) # grep accross revisions
@@ -192,6 +197,16 @@
 
 [status]
     relativePaths = true
+
+# Remembers how you solved a conflict
+[rerere]
+    enabled = true
+
+[column]
+    ui = auto
+
+[branch]
+    sort = -committerdate
 
 ## Tips and tricks
 # git log -L<start>,<end>:FILE      # To log the lines modified for specific chunk
