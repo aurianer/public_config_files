@@ -245,65 +245,65 @@ function gp() {
     # Ignore case
     # Avoid binary files
     #rg --vimgrep --hidden --no-ignore --ignore-case --color=always --ignore-file=tags "$@"
-    grep -rIin "$@" --exclude=tags --exclude-dir=\.git --exclude=compile_commands.json --color=auto
+    grep -rIin "$@" --exclude=tags --exclude-dir=\.git --exclude=compile_commands.json
 }
 
 function gpc() {
     # Match case
     # Avoid binary files
     #rg --vimgrep --hidden --no-ignore --case-sensitive --color=always --ignore-file=tags "$@"
-    grep -rnI "$@" --exclude=tags --exclude-dir=\.git --color=auto
+    grep -rnI "$@" --exclude=tags --exclude-dir=\.git
 }
 
 function gpa() {
     # Ignore case
     # Include binary files
     #rg --vimgrep --hidden --no-ignore --ignore-case --color=always --binary --ignore-file=tags "$@"
-    grep -rin "$@"  --color=auto
+    grep -rin "$@"
 }
 
 function gpe() {
-    egrep -rIin "$@" --exclude=tags --exclude-dir=\.git --color=auto
+    egrep -rIin "$@" --exclude=tags --exclude-dir=\.git
 }
 
 function gpec() {
-    egrep -rIn "$@" --exclude=tags --exclude-dir=\.git --color=auto
+    egrep -rIn "$@" --exclude=tags --exclude-dir=\.git
 }
 
 # To grep a function
 function gpf() {
-    grep -rIin " $@(" --exclude=tags --exclude-dir=\.* --color=auto
+    grep -rIin " $@(" --exclude=tags --exclude-dir=\.*
 }
 
 # Grep only cpp, hpp and related files
 function gpp() {
-    grep -rIin "$@" --include=\*.{cpp,hpp,hh,cc,h,c} --color=auto
+    grep -rIin "$@" --include=\*.{cpp,hpp,hh,cc,h,c}
 }
 
 function gpsh() {
-    grep -rIin "$@" --include=\*.sh --color=auto
+    grep -rIin "$@" --include=\*.sh
 }
 
 # Grep only cpp, hpp and related files with case match
 function gppc() {
-    grep -rIn "$@" --include=\*.{cpp,hpp,hh,cc,h,c} --color=auto
+    grep -rIn "$@" --include=\*.{cpp,hpp,hh,cc,h,c}
 }
 
 # Grep only cmake related files
 function gpcmake() {
-    grep -rIin "$@" --include=CMakeLists.txt --color=auto
-    grep -rIin "$@" --include=\*.cmake --color=auto
+    grep -rIin "$@" --include=CMakeLists.txt
+    grep -rIin "$@" --include=\*.cmake
 }
 
 # Grep only cmake related files but matching case
 function gpcmakec() {
-    grep -rIn "$@" --include=CMakeLists.txt --color=auto
-    grep -rIn "$@" --include=\*.cmake --color=auto
+    grep -rIn "$@" --include=CMakeLists.txt
+    grep -rIn "$@" --include=\*.cmake
 }
 
 # Grep excluding the tests/ directories
 function gp-exclude() {
-    grep -rIin "$@" --color=auto --exclude=tags --exclude-dir=\.* \
+    grep -rIin "$@"  --exclude=tags --exclude-dir=\.* \
         --exclude-dir={cmake,test,example,doc}*
 }
 
@@ -317,21 +317,27 @@ function gpinc() {
         sequence2="include.*$1.*h.*\""
     fi
     # Exclude binary files and the file with vim tags
-    grep -rnI $sequence1 --include=*.{hpp,cpp,c,h} --color=auto
+    grep -rnI $sequence1 --include=*.{hpp,cpp,c,h}
     # A second grep to find the include with ""
-    grep -rnI $sequence2 --include=*.{hpp,cpp,c,h} --color=auto
+    grep -rnI $sequence2 --include=*.{hpp,cpp,c,h}
+}
+
+function gpimport() {
+    sequence="import.*$1"
+    # Exclude binary files and the file with vim tags
+    grep -rnI $sequence --include=*.py*
 }
 
 # Grep a specific type for ex: gp thread_executors *.txt
 function gptype() {
     # same as gp but for a specific filetype
-    grep -rIin "$1" --exclude=tags --color=auto --exclude-dir=\.* **/*${2}
+    grep -rIin "$1" --exclude=tags  --exclude-dir=\.* **/*${2}
 }
 
 # Grep a specific type for ex: gpc thread_executors *.txt
 function gptypec() {
     # same as gp but for a specific filetype with matching case
-    grep -rIn "$1" --exclude=tags --color=auto --exclude-dir=\.* **/*${2}
+    grep -rIn "$1" --exclude=tags  --exclude-dir=\.* **/*${2}
 }
 
 function gpl() {
@@ -342,13 +348,13 @@ function gpl() {
         regexp="${regexp}.*${arg}"
     done
     # Exclude binary
-    grep -rnI "$regexp" --exclude=tags --color=auto
+    grep -rnI "$regexp" --exclude=tags
 }
 
 # Grep the argument and isolate the filenames of the result
 function gpfiles() {
     # Exclude binary files
-    grep -rIin "$@" --exclude=tags --color=auto | cut -d':' -f1 | uniq
+    grep -rIin "$@" --exclude=tags  | cut -d':' -f1 | uniq
 }
 
 function isolate_files() {
