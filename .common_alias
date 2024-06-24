@@ -6,6 +6,9 @@
 
 # A file for new aliases and commands (makes the .bashrc much cleaner)
 
+# Colors
+RED='\033[0;31m'
+NC='\033[0m' # No Color
 
 ###############################################################################
 # BASH
@@ -20,9 +23,11 @@ alias fda='fd --type f -exec ls -la' # Find only files
 alias gi=git
 alias gti=git
 alias grep='grep --color=always'
+alias fgrep='fgrep --color=always'
+alias egrep='egrep --color=always'
 alias htop='htop -u $USER'
-alias l='ls -l'
 alias ls='ls --color=auto -A -h'
+alias l='ls -l'
 alias list_uid_min_max="grep -E '^UID_MIN|^UID_MAX' /etc/login.defs"
 #alias list_users="getent passwd {$(grep -E '^UID_MIN' /etc/login.defs | cut -f2 -d' ')..60000}"
 alias list_users='compgen -u'
@@ -37,9 +42,9 @@ alias sc=source
 alias ta='vim -t'   # To jump directly to the definition
 # Open multiple files on the same line in vim
 alias vim='vim -o'
-alias vmi='vim -o'
-alias ivm='vim -o'
-alias vimo='vim -o'
+alias vmi=vim
+alias ivm=vim
+alias vimo=vim
 alias ctest_print='ctest --show-only'
 # TODO: make a function that open staged files only if modified files are empty
 alias vimfs='vim -o $(git diff --name-only --cached --relative | head -n1)' # Staged files
@@ -65,6 +70,7 @@ alias print_host_fingerprint='ssh-keygen -l -f /etc/ssh/ssh_host_ed25519_key.pub
 alias hwloc_graph_print_binding='hwloc-bind core:0-2 -- lstopo --pid 0'
 alias nvidia_smi='nvidia-smi --help-query-gpu'
 alias spack_add_latest_version='spack checksum --latest --add-to-package'
+alias leave_half_cores='hwloc-bind -v core:0-$(expr $(nproc) / $(hwloc-calc --number-of pu core:0) / 2 - 1) --'
 
 # Format spack package, might need to load python environment with
 # $SPACK_ROOT/.github/workflows/style/requirements.txt installed
@@ -83,8 +89,6 @@ alias scan_devices='echo sudo nmap -sn 192.168.1.0/24 && sudo nmap -sn 192.168.1
 alias calc='bc -l'
 alias srunhw='srun --showhw'
 alias set_back_acl="setfacl -R -b" # Add the dir
-RED='\033[0;31m'
-NC='\033[0m' # No Color
 
 # SPACK
 alias sp=spack
