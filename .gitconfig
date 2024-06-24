@@ -63,7 +63,7 @@
     br = branch
     brf = branch -f
     ba = branch -av
-    bl = "!git blame -w -C -C -L$2,$2 -- $1 #"    # To find out who modified a specific line of the file
+    bl = "!git blame -w -C -C HEAD -L$2,$2 -- $1 #" # HEAD to specify we ignore uncommitted changes
     blamehistory="!git log -L :File:$1 #"
     bv = branch -vv
     ci = commit
