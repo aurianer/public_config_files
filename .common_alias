@@ -36,6 +36,7 @@ alias mkdir='mkdir -p'
 alias nm='nm -A'
 alias pd='pushd'
 alias psa='ps aux | grep'
+alias ps_user="ps aux | grep $USER"
 alias proc_nb='cat /proc/cpuinfo | grep proc | wc -l'
 alias sl=ls
 alias sc=source
