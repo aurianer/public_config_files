@@ -182,7 +182,7 @@ nmap <F2> :TagbarToggle<CR>
   "
   " If you want to show the nearest function in your statusline automatically,
   " you can add the following line to your vimrc
-  autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+"  autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
   " How each level is indented and what to prepend.
   " This could make the display more compact or more spacious.
@@ -230,7 +230,7 @@ nmap <F2> :TagbarToggle<CR>
 " YCM
     " Disable (=0) the question to load ycm_extra_conf.py and load it automatically
     "let g:ycm_confirm_extra_conf = 1
-    "let g:ycm_goto_buffer_command="split"
+    let g:ycm_goto_buffer_command="split"
     "nnoremap <leader>jd :sp <CR>:exec("YcmCompleter GoToDefinitionElseDeclaration")<CR>
 
     " Open split with possible definitions for the symbol
@@ -240,7 +240,7 @@ nmap <F2> :TagbarToggle<CR>
     nnoremap <leader>i ::YcmCompleter GoToInclude<CR>
     " To prevent the quickfix window from closing after opening a file
     autocmd User YcmQuickFixOpened autocmd! ycmquickfix WinLeave
-    " To open the quickfix file in a split, mapping only valid in the qf win
+    " To open the quickfix file in a split use leader-enter, mapping only valid in the qf win
     autocmd! FileType qf nnoremap <buffer> <leader><Enter> <C-w><Enter>
     " Search symbols and add them to the quickfix window
     nmap <leader>yfw <Plug>(YCMFindSymbolInWorkspace)
