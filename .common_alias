@@ -71,7 +71,7 @@ alias print_host_fingerprint='ssh-keygen -l -f /etc/ssh/ssh_host_ed25519_key.pub
 alias hwloc_graph_print_binding='hwloc-bind core:0-2 -- lstopo --pid 0'
 alias nvidia_smi='nvidia-smi --help-query-gpu'
 alias spack_add_latest_version='spack checksum --latest --add-to-package'
-alias leave_half_cores='hwloc-bind -v core:0-$(expr $(nproc) / $(hwloc-calc --number-of pu core:0) / 2 - 1) --'
+alias leave_half_cores='hwloc-bind core:0-$(expr $(nproc) / $(hwloc-calc --number-of pu core:0) / 2 - 1) --'
 
 # Format spack package, might need to load python environment with
 # $SPACK_ROOT/.github/workflows/style/requirements.txt installed
@@ -760,6 +760,18 @@ function nodel() {
         _jobid=$1
     fi
     srun --jobid=$_jobid --overlap --pty bash
+}
+# Several nodes in allocation, we ssh the first
+function nodew() {
+    if [[ $# -lt 1 ]]; then
+        _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
+    else
+        _jobid=$1
+    fi
+    echo $_jobid
+    _nodesid=$(squeue -u $USER -l | awk 'NR==3{print $NF}')
+    _nodeid=$(echo "$_nodesid" | sed "s/\[\([0-9]*\)-\([0-9]*\)]/\1/")
+    srun --jobid=$_jobid -w$_nodeid --overlap --pty bash
 }
 
 function spack_edit_package() {
