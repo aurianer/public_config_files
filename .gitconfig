@@ -93,13 +93,13 @@
     dlb = branch -d
     dlbf = branch -D
     fa = fetch --all
-    fpr = "!git fetch origin pull/$1/head:pr$1 #" # to fetch a PR
-    ft = fetch
+    fpr = "!git fetch --no-tags origin pull/$1/head:pr$1 #" # to fetch a PR
+    ft = fetch --no-tags
     ftprune = fetch --prune  # Delete branches which have been deleted on the remote
     # Add a + in front of the first refs (the local one) to overwrite it
     fttag = "!git fetch origin refs/tags/$1:refs/tags/$1"
     # To fetch all the tags from origin and update the local ones
-    fttags = fetch origin refs/tags/*:refs/tags/*
+    fttags = fetch origin refs/tags/*:refs/tags/*   # now can use git fetch --tags origin
     fix = commit --fixup
     fxi = commit --fixup
     fo = log --graph --oneline --decorate --follow -- # Find which commit modify a certain file
