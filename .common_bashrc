@@ -18,6 +18,8 @@ fi
 
 # To authorize ls **/*.hpp for example
 shopt -s globstar
+# To prevent bash from escaping dollar when doing tab
+shopt -s direxpand
 
 # don't put duplicate lines or lines starting with space in the history.
 export HISTCONTROL=ignoreboth
@@ -65,8 +67,8 @@ if [[ -z $build_type ]]; then
 fi
 export pika_common_configure_extra_options="-GNinja -DCMAKE_BUILD_TYPE=${build_type} -DPIKA_WITH_COMPILER_WARNINGS=ON -DPIKA_WITH_COMPILER_WARNINGS_AS_ERRORS=ON -DPIKA_WITH_CHECK_MODULE_DEPENDENCIES=ON -DPIKA_WITH_EXAMPLES=ON -DPIKA_WITH_TESTS=ON"
 
-# Use Ctrl-X to expand the alias in the terminal
-bind '"\C-x": alias-expand-line'
+## Use Ctrl-X to expand the alias in the terminal
+#bind '"\C-x": alias-expand-line'
 
 ## To enable debug command in git
 #export GIT_TRACE=1
