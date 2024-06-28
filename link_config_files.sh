@@ -15,7 +15,9 @@ function check_if_exist_and_link() {
         mv ~/.$1 ~/.$1.bkp
     fi
     if [[ ! -f ~/.$1 ]]; then
+        pushd ~ > /dev/null
         ln -s $cloned_dir/.$1 ~/.$1
+        popd > /dev/null
     fi
 }
 
