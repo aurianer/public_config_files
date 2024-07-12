@@ -58,6 +58,21 @@ alias ta='vim -t'   # Find a specific tag definition
 
 alias notify="zenity --info --text=\"Job finished\""
 
+# Slurm
+alias show_partitions='sinfo -a -l'
+alias show_details_job='scontrol show job' # job id as arg
+alias show_nodes='scontrol show nodes' # optional node id
+alias quota=quota   # To print the quotas left
+
+#Spack
+alias spack_location="cd $SPACK_ROOT"
+
+# Python
+alias upgrade_pip='python -m ensurepip && python -m pip install --upgrade pip'
+
+# Containers
+alias podman_login_ngc="podman login nvcr.io"
+
 alias valgrind_cmd='valgrind  --error-exitcode=1 --leak-check=full --fair-sched=yes --gen-suppressions=all' # --suppressions=$HOME/projects/pika_valgrind/tools/valgrind/memcheck.supp
 
 # To clear when yubikey not recognized
@@ -800,8 +815,8 @@ function compare_strings() {
 
 function remote_add() {
     remote_name=${1:-aurianer}
-    url=$(git remote -v | grep -o origin.*.git | awk '{print $2}')
-    echo $url | grep -q https # check if origin url is in https
+    url=$(git remote -v | grep --color=none -o origin.*.git | awk '{print $2}')
+    echo $url | grep --color=none -q https # check if origin url is in https
     is_ssh=$?
     if [[ $is_ssh == 0 ]]; then
         # convert https url into ssh
