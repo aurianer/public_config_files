@@ -8,6 +8,9 @@
     email = 8trash-can8@protonmail.ch
     name = aurianer
 
+[advice]
+    detachedHead = false
+
 [commit]
     gpgSign = false
 
@@ -77,6 +80,7 @@
     cp = cherry-pick
     cpa = cherry-pick --abort
     cpc = cherry-pick --continue
+    cpext = "!git --git-dir=$1/.git format-patch -k -1 --stdout $2 | git am -3 -k"
     date = commit --amend --no-edit --date=format:relative:0.hours.ago
     # Adding the quotes and the comment at the end to fix a regression introduced in git 2.28
     dateh = "!git commit --amend --no-edit --date=format:relative:${1:-1}.hours.ago #"
