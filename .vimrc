@@ -89,8 +89,8 @@ nnoremap ca_ dt_cT_
 " B for browse
 map <C-y> :NERDTree<CR>
 "map <C-t> :help NERDTree.txt<CR>
-map <C-p> :set paste<CR>
-map <C-n> :set nopaste<CR>
+map <C-p> :set paste!<CR>
+map <C-n> :set number!<CR>
 " Move the split bar
 map <S-h> <C-W><
 map <S-l> <C-W>>
@@ -158,6 +158,7 @@ au BufNewFile,BufRead *.vert,*.frag,*.glsl,*.comp set filetype=cpp
 au BufNewFile,BufRead *.tpp set filetype=cpp
 au BufNewFile,BufRead *.cl set filetype=cpp
 au BufRead,BufNewFile *.pc set filetype=pc
+au BufRead,BufNewFile *.sub set filetype=sh
 " The rest is defined in each syntax/*.vim files
 
 " This plugin manager installs all the plugins in the bundle directory
