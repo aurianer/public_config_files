@@ -44,7 +44,6 @@ export TERM=xterm
 export SRC_DIR=$HOME/projects
 export BUILD_DIR=$HOME/build
 export SCRIPT_DIR=$HOME/scripts
-export INSTALL_DIR=$HOME/install
 
 # Setup Ccache
 #export CCACHE_DIR=$INSTALL_DIR/ccache  # To set per machine not in common_bashrc
