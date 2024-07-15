@@ -125,7 +125,9 @@
     lgb = log --graph --oneline --decorate
     lgf = log --date=short --follow --   # To know which commits modify a specific file
     lgs = log --graph --oneline --decorate --date=short --all --stat
-    patch = !git diff $1 $2 > diff.patch    # Create a patch out of a diff
+    patch = !git diff $1 $2 > diff.patch    # patch from a diff
+    patchci = !git diff $1^..$1 > diff.patch   # Patch from the last commit
+    patchbin = !git diff --cached $1 $2 > diff.patch    # patch from a diff including binaries
     app = !git apply diff.patch         # apply it to the current state, useful with spack patches
     pushf = push --force-with-lease
     puhsf = pushf
