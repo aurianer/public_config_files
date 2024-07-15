@@ -309,6 +309,10 @@ function gppc() {
     grep -rIn "$@" --include=\*.{cpp,hpp,hh,cc,h,c}
 }
 
+function gp_conflict() {
+    grep -rIin "<<<<<<< HEAD" --exclude=tags --exclude-dir=\.git --exclude=compile_commands.json
+}
+
 # Grep only cmake related files
 function gpcmake() {
     grep -rIin "$@" --include=CMakeLists.txt
@@ -814,8 +818,10 @@ function compare_strings() {
 }
 
 function remote_add() {
+    url=""
     remote_name=${1:-aurianer}
-    url=$(git remote -v | grep --color=none -o origin.*.git | awk '{print $2}')
+    url=$(git remote -v | grep --color=none -o origin[[:space:]]*[^[:space:]]*)
+    url=$(echo $url | awk 'NR==1{print $2}')
     echo $url | grep --color=none -q https # check if origin url is in https
     is_ssh=$?
     if [[ $is_ssh == 0 ]]; then
