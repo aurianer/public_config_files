@@ -60,9 +60,11 @@ alias notify="zenity --info --text=\"Job finished\""
 
 # Slurm
 alias show_partitions='sinfo -a -l'
+alias show_reservations='scontrol show reservation' # show_reservations large_job_debug
 alias show_details_job='scontrol show job' # job id as arg
 alias show_nodes='scontrol show nodes' # optional node id
 alias quota=quota   # To print the quotas left
+alias sat_show='sat showrev'
 
 # GPU metrics
 alias power_cap='nvidia-smi -q -d POWER'
@@ -798,6 +800,13 @@ function nodew() {
     srun --jobid=$_jobid -w$_nodeid --overlap --pty bash
 }
 
+function spack_root() {
+    if [[ -z $SPACK_ROOT ]]; then
+        echo "please set SPACK_ROOT"; return
+    fi
+    cd $SPACK_ROOT
+}
+
 function spack_edit_package() {
     if [[ -z $SPACK_ROOT ]]; then
         echo "please set SPACK_ROOT"; return
@@ -809,6 +818,11 @@ function spack_edit_package() {
 function compile_all_unit_tests() {
     ninja -j4 -k 0 \
         $(ninja help | grep '^tests.unit.modules\.' | awk -F':' '{ print $1 }')
+}
+
+# Use this alias in the build dir and then link to the root of the project
+function generate_compilation_db() {
+    ninja -t compdb > compile_commands.json
 }
 
 function compare_strings() {
