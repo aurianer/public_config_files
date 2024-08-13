@@ -64,6 +64,11 @@ alias show_details_job='scontrol show job' # job id as arg
 alias show_nodes='scontrol show nodes' # optional node id
 alias quota=quota   # To print the quotas left
 
+# GPU metrics
+alias power_cap='nvidia-smi -q -d POWER'
+alias supported_clocks='nvidia-smi -q -d SUPPORTED_CLOCKS'
+alias measure_gpu_metrics='nvidia-smi --query-gpu=index,timestamp,power.draw,clocks.sm,clocks.mem,clocks.gr --format=csv -l 1'
+
 #Spack
 alias spack_location="cd $SPACK_ROOT"
 
