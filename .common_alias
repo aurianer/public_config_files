@@ -628,8 +628,15 @@ function create_venv() {
 	error_missing_args "${FUNCNAME}"
 	usage_func "${FUNCNAME} <env_name>"
     else
-	python3 -m venv ~/virtual_envs/${1}
+        if [[ -z $CLUSTER_NAME ]]; then
+            _dir="$HOME/virtual_envs/${1}"
+            mkdir -p $_dir > /dev/null
+        else
+            _dir="$SCRATCH/virtual_envs/${1}"
+        fi
+	python3 -m venv $_dir
 	echo "${1} environment created"
+        unset _dir
     fi
 }
 
