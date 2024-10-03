@@ -42,7 +42,6 @@ test -s ~/.alias && . ~/.alias || true
 export TERM=xterm
 
 export SRC_DIR=$HOME/projects
-export BUILD_DIR=$HOME/build
 export SCRIPT_DIR=$HOME/scripts
 
 # Setup Ccache
