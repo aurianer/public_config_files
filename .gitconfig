@@ -238,3 +238,5 @@
     #fpr = "!echo $(git fetch origin pull/$1/head:pr$1)" # to fetch a PR
 # - BEST Solution just put a # at the end, this comments the rest arriving after
     #fpr = "!git fetch origin pull/$1/head:pr$1 #" # to fetch a PR
+[init]
+	defaultBranch = main
