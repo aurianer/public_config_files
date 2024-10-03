@@ -1,0 +1,96 @@
+# Copyright (c) 2019    Auriane Reverdell
+#
+# SPDX-License-Identifier: BSL-1.0
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+# A file for new aliases and commands (makes the .bashrc much cleaner)
+
+# We load common aliases (accross several platforms)
+if [ -f ~/.common_alias ]; then
+    . ~/.common_alias
+fi
+
+###############################################################################
+# SLURM
+#
+#using gpu partition dev
+alias sall='salloc  --account=project_465000105 -N1 -n1 --gpus-per-task=1 --partition=dev-g -t90'
+#alias sall='salloc --partition=eap --account=project_465000105 -N1 -n1 --gpus-per-task=1 -t10'
+alias sall_hw='srun --partition=eap --account=project_465000105 -N1 -n1 --gpus-per-task=1 rocm-smi --showhw'
+alias sall_standard='salloc --partition=standard --account=project_465000105 -N1 -n1 -t30'
+alias squ='squeue -u $USER -l'			    # -l to know the node id
+alias squ_jobs='squeue -u $USER -s'	    # -s to know the job step id
+alias squ_prio='squeue -t pd -S-p'          # List pending jobs with decreasing prio
+alias sq='squeue |less'
+alias sq_nodes='squeue --format="%.22N %.8u %.6D %.4c %.8z %.6m %.8d %.6w %.8f %.18G" |less'
+alias sio='sinfo --summarize -o'
+alias si='sinfo --summarize |less'
+alias si_avail_nodes='sinfo -tidle -pamdvega'
+alias si_eap='sinfo -tidle -peap'
+# -S-f means sorting features (descending) which are {mc, gpu}
+alias si_details_nodes='sinfo -tidle -S-f --format="%.22N %.6D %.4c %.8z %.6m %.8d %.6w %.8f %.18G"'
+alias see_steps='sacct -j'                  # Print the jobsteps for a specific job
+alias prio_factors='sprio -l'               # Display the factors that participate to the resulting priority
+alias sb=sbatch
+alias scu='scancel -u $USER'
+alias list_partitions='sinfo -s'
+alias show_partition='scontrol show partition'
+alias list_usage='lumi-allocations'
+
+function sallnode() {
+    salloc -N1 -wault0${1} -t60
+}
+
+function salltnode() {
+    salloc -N1 -wault0${1} -t${2}
+}
+
+# Cancels the first jobs prompting when doing squ
+function cancel() {
+    jobid=$(squ | awk '{print $1}' | awk '/JOBID/{getline; print}')
+    echo "cancel jobid $jobid"
+    scancel $jobid
+}
+###############################################################################
+
+
+###############################################################################
+# PYTHON redefinition with another python version
+unalias pyvenv 2> /dev/null
+alias pyvenv='python3.6 -m venv'
+
+unset -f create_venv
+function create_venv() {
+    if [[ "$#" == 0 ]]; then
+	error_missing_args "${FUNCNAME}"
+	usage_func "${FUNCNAME} <env_name>"
+    else
+	echo "Rk : Default python version used to create the env is 3.7"
+	python3.7 -m venv ${1}
+	echo "${1} environment created"
+    fi
+}
+
+function spack_setup() {
+    export SPACK_ROOT=$PROJECT/spack_common
+    export SPACK_USER_CONFIG_PATH=$SPACK_ROOT/.spack_default_config
+    export SPACK_USER_CACHE_PATH=$SPACK_ROOT/.spack_default_cache
+    . $SPACK_ROOT/share/spack/setup-env.sh
+}
+
+function spack_setup_pytorch() {
+    export SPACK_ROOT=$SCRATCH/install/spack_pytorch
+    export SPACK_USER_CONFIG_PATH=$SPACK_ROOT/.spack_default_config
+    export SPACK_USER_CACHE_PATH=$SPACK_ROOT/.spack_default_cache
+    . $SPACK_ROOT/share/spack/setup-env.sh
+}
+
+# Using the shared instance of spack on LUMI
+function spack_setup_ssa() {
+    export SPACK_ROOT=/projappl/project_465000105/spack
+    export SPACK_USER_CONFIG_PATH=$PROJECT/spack_common/.spack_ssa_config
+    export SPACK_USER_CACHE_PATH=$PROJECT/spack_common/.spack_ssa_cache
+    . $SPACK_ROOT/share/spack/setup-env.sh
+}
+###############################################################################

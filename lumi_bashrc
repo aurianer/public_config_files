@@ -1,0 +1,58 @@
+#!/bin/bash -l
+# Sample .bashrc for SuSE Linux
+# Copyright (c) SuSE GmbH Nuernberg
+
+# There are 3 different types of shells in bash: the login shell, normal shell
+# and interactive shell. Login shells read ~/.profile and interactive shells
+# read ~/.bashrc; in our setup, /etc/profile sources ~/.bashrc - thus all
+# settings made here will also take effect in a login shell.
+#
+# NOTE: It is recommended to make language settings in ~/.profile rather than
+# here, since multilingual X sessions would not work properly if LANG is over-
+# ridden in every subshell.
+
+# Some applications read the EDITOR variable to determine your favourite text
+# editor. So uncomment the line below and enter the editor of your choice :-)
+export EDITOR=/usr/bin/vim
+#export EDITOR=/usr/bin/mcedit
+
+# For some news readers it makes sense to specify the NEWSSERVER variable here
+#export NEWSSERVER=your.news.server
+
+# If you want to use a Palm device with Linux, uncomment the two lines below.
+# For some (older) Palm Pilots, you might need to set a lower baud rate
+# e.g. 57600 or 38400; lowest is 9600 (very slow!)
+#
+#export PILOTPORT=/dev/pilot
+#export PILOTRATE=115200
+
+test -s ~/.alias && . ~/.alias || true
+
+test -s ~/.common_bashrc && . ~/.common_bashrc || true
+test -s ~/.fzf.bash && . ~/.fzf.bash || true
+
+# Shark fd
+export PATH=$HOME/install/fd-v8.3.2-x86_64-unknown-linux-gnu:$PATH
+
+export PROJECT_NB=project_465000105
+export PROJECT_LUST=project_465000320
+export SCRATCH=/scratch/$PROJECT_NB/aureverd
+export PROJECT=/project/$PROJECT_NB/aureverd
+export PROJAPPL=/pfs/lustrep2/projappl/$PROJECT_NB
+
+export BUILD_DIR_DLAF=$SCRATCH/build
+export INSTALL_DIR=$SCRATCH/install
+
+# Add fd and ninja in the path
+export PATH=$HOME/config/base_tools/fd/fd-v8.7.1-x86_64-unknown-linux-gnu:$PATH
+export PATH=$PROJAPPL/spack/opt/spack/cray-sles15-zen2/gcc-11.2.0/ninja-1.11.0-ldxpnjo2wn7alzax4v3eyp2nkzvdujrr/bin:$PATH
+
+export spack_pika_deps='pika@then_with_cusolver_hip+rocm%gcc@10.3.0 amdgpu_target=gfx908 ^hip@5.0.2 ^mesa~llvm ^rocblas amdgpu_target=gfx908'
+export spack_dlaf_deps='dla-future%gcc+miniapps+rocm build_type=Release arch=cray-sles15-zen2 ^blaspp~openmp ^blt@0.4.1 ^boost@1.78.0 ^intel-mkl ^umpire@5.0.1+rocm~shared ^mesa~llvm'
+export spack_dlaf_deps_umpire6='dla-future%gcc+miniapps+rocm build_type=Release arch=cray-sles15-zen2 ^blaspp~openmp ^blt@0.4.1 ^boost@1.78.0 ^intel-mkl ^umpire@6.0.0+rocm~shared ^mesa~llvm'
+
+# vim@9.1 which supports youcompleteme
+export PATH=/pfs/lustrep2/projappl/project_465000105/aureverd/spack_common/opt/spack/linux-sles15-zen3/gcc-13.2.1/vim-9.1.0437-mmss2onwrpsavgprer3hlxqwreb3tq75/bin:$PATH
+EDITOR=vim
+
+export PATH=/pfs/lustrep2/scratch/project_465000105/aureverd/install/spack/opt/spack/linux-sles15-zen2/gcc-12.3.0/tmux-3.4-m2wqqrauluyol66lf52pvkmoio2wtpxg/bin:$PATH
