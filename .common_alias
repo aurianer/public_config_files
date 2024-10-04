@@ -123,11 +123,12 @@ alias sp_avail='spack location -i'   # print versions installed
 alias sp_purge='spack gc'    # uninstall unused dependencies
 alias sp_add_compiler='spack compiler find' # Add new compilers from modules loaded
 alias sp_comp_list='spack compiler list'
-function spload {
-    spack load "$@" arch=$(spack arch)
+
+function print_git_alias() {
+    git config alias.${1}
 }
-function sp_debug {
-    spack -d -v "$@"
+function spload {
+    eval `spack load "$@"`
 }
 # Spack environment
 alias sp_env_create='spack env create'
