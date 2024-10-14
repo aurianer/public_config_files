@@ -37,7 +37,6 @@ alias show_nodes='scontrol show nodes' # optional node id
 alias quota=quota   # To print the quotas left
 alias sat_show='sat showrev'
 
-
 # Go to the first allocated node
 function node() {
     if [[ $# -lt 1 ]]; then
