@@ -16,6 +16,9 @@ else
     fi
 fi
 
+## Set vi for bash editing mode
+#set -o vi
+
 # To authorize ls **/*.hpp for example
 shopt -s globstar
 # To prevent bash from escaping dollar when doing tab
