@@ -36,6 +36,7 @@ check_if_exist_and_link vim
 check_if_exist_and_link gitconfig
 check_if_exist_and_link common_bashrc
 check_if_exist_and_link common_alias
+check_if_exist_and_link alias_slurm
 
 # Append sourcing common_bashrc in bashrc if not already there
 append_to_config bashrc

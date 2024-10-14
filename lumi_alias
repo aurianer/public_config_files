@@ -7,9 +7,8 @@
 # A file for new aliases and commands (makes the .bashrc much cleaner)
 
 # We load common aliases (accross several platforms)
-if [ -f ~/.common_alias ]; then
-    . ~/.common_alias
-fi
+test -s ~/.common_alias && . ~/.common_alias || true
+test -s ~/.alias_slurm && . ~/.alias_slurm || true
 
 # Allocation aliases bound to the cluster
 alias sall='salloc  --account=project_465000105 -N1 -n1 --gpus-per-task=1 --partition=dev-g -t90'
