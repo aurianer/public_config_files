@@ -775,7 +775,7 @@ function spack_root() {
     if [[ -z $SPACK_ROOT ]]; then
         echo "please set SPACK_ROOT"; return
     fi
-    cd $SPACK_ROOT
+    pushd $SPACK_ROOT > /dev/null
 }
 
 function spack_edit_package() {
