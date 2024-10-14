@@ -287,13 +287,13 @@ nnoremap <leader>f  ::YcmCompleter FixMe<CR>
 " refactor the name under the cursor
 nnoremap <leader>n  ::YcmCompleter RefactorRename<space>
 
-"" Ctrl-P
-"    "let g:ctrlp_prompt_mappings = {
-"    "\ 'AcceptSelection("e")': ['<c-v>', '<2-LeftMouse>'],
-"    "\ 'AcceptSelection("v")': ['<cr>', '<RightMouse>'],
-"    "\ }
-"    " (r) the nearest ancestor which has .git, or (a) current working dir if no ancestor
-"    let g:ctrlp_working_path_mode = 'r'
-"    let g:ctrlp_open_multiple_files = '2hjr'
+" Ctrl-P
+    "let g:ctrlp_prompt_mappings = {
+    "\ 'AcceptSelection("e")': ['<c-v>', '<2-LeftMouse>'],
+    "\ 'AcceptSelection("v")': ['<cr>', '<RightMouse>'],
+    "\ }
+    " (r) the nearest ancestor which has .git, or (a) current working dir if no ancestor
+    let g:ctrlp_working_path_mode = 'r'
+    let g:ctrlp_open_multiple_files = '2hjr'
 
 filetype plugin indent on
