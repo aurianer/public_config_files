@@ -5,12 +5,19 @@ set encoding=utf-8
 filetype on	    " enable file type detection
 syntax on	    " syntax highlighting
 
+"silent !stty -ixon
+
 :colorscheme default
 set shiftwidth=4
 set softtabstop=4
 set textwidth=100
 set colorcolumn=100
 highlight ColorColumn ctermbg=darkgray
+
+"" vim terminal integration settings (see :help terminal-typing):
+" Restore C-w functionality
+tnoremap <C-w> <C-w>.
+" TODO: search how to make CTRL-shift-V work in the vim terminal
 
 " set statusline display
 set statusline=%F%m%r%h%w\ [POS=%l,%v][%p%%]\ [BUFFER=%n]}
