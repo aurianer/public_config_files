@@ -1,0 +1,76 @@
+# Copyright (c) 2018- 2024 Auriane Reverdell
+#
+# SPDX-License-Identifier: BSL-1.0
+# Distributed under the Boost Software License, Version 1.0. (See accompanying
+# file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
+
+# A file for aliases concerning slurm
+
+# Allocation aliases independent of the cluster
+alias cancel="scancel -u $USER"
+alias cancell="scancel $(squeue -u $USER | awk '{print $1}' | tail -n1)"
+alias squ="squeue --long -u $USER" # --long to know the node id
+alias cat_last_job="cat slurm-$(squeue -u $USER | awk '{print $1}' | tail -n1).out"
+
+# Stats
+alias squ_jobs='squeue -u $USER -s'         # -s to know the job step id
+alias squ_prio='squeue -t pd -S-p'          # List pending jobs with decreasing prio
+# -S-f means sorting features (descending) which are {mc, gpu}
+alias sq='squeue |less'
+alias sq_nodes='squeue --format="%.22N %.8u %.6D %.4c %.8z %.6m %.8d %.6w %.8f %.18G" |less'
+alias sio='sinfo --summarize -o'
+alias si='sinfo --summarize |less'
+alias si_avail_nodes='sinfo -tidle -p${1:normal}'
+# -S-f means sorting features (descending) which are {mc, gpu}
+alias si_details_nodes='sinfo -pnormal -tidle -S-f --format="%.22N %.6D %.4c %.8z %.6m %.8d %.6w %.8f %.18G"'
+alias si_details_nodes_large='sinfo -pnormal -tidle -S-f --format="%.40N %.6D %.4c %.8z %.6m %.8f"'
+alias see_steps='sacct -j'                  # Print the jobsteps for a specific job
+alias prio_factors='sprio -l'               # Display the factors that participate to the resulting priority
+alias list_partitions='sinfo -s'
+alias show_partition='scontrol show partition'
+
+alias srunhw='srun --showhw'
+alias show_partitions='sinfo -a -l'
+alias show_reservations='scontrol show reservation' # show_reservations large_job_debug
+alias show_details_job='scontrol show job' # job id as arg
+alias show_nodes='scontrol show nodes' # optional node id
+alias quota=quota   # To print the quotas left
+alias sat_show='sat showrev'
+
+
+# Go to the first allocated node
+function node() {
+    if [[ $# -lt 1 ]]; then
+        _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
+    else
+        _jobid=$1
+    fi
+    srun --jobid=$_jobid --overlap --pty bash
+}
+function nodel() {
+    if [[ $# -lt 1 ]]; then
+        _jobid=$(squeue -u $USER | awk '{print $1}' | tail -n1)
+    else
+        _jobid=$1
+    fi
+    srun --jobid=$_jobid --overlap --pty bash
+}
+# Several nodes in allocation, we ssh the first
+function nodew() {
+    if [[ $# -lt 1 ]]; then
+        _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
+    else
+        _jobid=$1
+    fi
+    echo $_jobid
+    _nodesid=$(squeue -u $USER -l | awk 'NR==3{print $NF}')
+    _nodeid=$(echo "$_nodesid" | sed "s/\[\([0-9]*\)-\([0-9]*\)]/\1/")
+    srun --jobid=$_jobid -w$_nodeid --overlap --pty bash
+}
+
+# Cancels the first jobs prompting when doing squ
+function cancel() {
+    jobid=$(squ | awk '{print $1}' | awk '/JOBID/{getline; print}')
+    echo "cancel jobid $jobid"
+    scancel $jobid
+}

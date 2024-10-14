@@ -15,11 +15,12 @@ NC='\033[0m' # No Color
 #
 # To expand the aliases in the terminal press Ctrl-Alt-E (it does shell-expand-inline internally)
 alias cl=clear
-alias fd='fdfind'
+#alias fd='fdfind' # when sharkpd/fd not available
 alias fd='fd --hidden'
 alias fdd='fd --type d --hidden' # Find only directories
 alias fdf='fd --type f --hidden --exclude .git' # Find only files
 alias fda='fd --type f -exec ls -la' # Find only files
+alias fd1='fd --maxdepth 1' # Find only in the current directory
 alias gi=git
 alias gti=git
 alias grep='grep --color=always'
@@ -57,14 +58,6 @@ alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
 alias ta='vim -t'   # Find a specific tag definition
 
 alias notify="zenity --info --text=\"Job finished\""
-
-# Slurm
-alias show_partitions='sinfo -a -l'
-alias show_reservations='scontrol show reservation' # show_reservations large_job_debug
-alias show_details_job='scontrol show job' # job id as arg
-alias show_nodes='scontrol show nodes' # optional node id
-alias quota=quota   # To print the quotas left
-alias sat_show='sat showrev'
 
 # GPU metrics
 alias power_cap='nvidia-smi -q -d POWER'
@@ -110,7 +103,6 @@ alias wifi='nmcli d wifi'
 alias i='ip -c -br a'   # List the IP addresses on the network
 alias scan_devices='echo sudo nmap -sn 192.168.1.0/24 && sudo nmap -sn 192.168.1.0/24' # scan devices on the network
 alias calc='bc -l'
-alias srunhw='srun --showhw'
 alias set_back_acl="setfacl -R -b" # Add the dir
 
 # SPACK
@@ -778,35 +770,6 @@ alias gpgcreate='gpg --full-generate-key'
 
 ###############################################################################
 
-# Go to the first allocated node
-function node() {
-    if [[ $# -lt 1 ]]; then
-        _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
-    else
-        _jobid=$1
-    fi
-    srun --jobid=$_jobid --overlap --pty bash
-}
-function nodel() {
-    if [[ $# -lt 1 ]]; then
-        _jobid=$(squeue -u $USER | awk '{print $1}' | tail -n1)
-    else
-        _jobid=$1
-    fi
-    srun --jobid=$_jobid --overlap --pty bash
-}
-# Several nodes in allocation, we ssh the first
-function nodew() {
-    if [[ $# -lt 1 ]]; then
-        _jobid=$(squeue -u $USER | awk 'NR==2{print $1}')
-    else
-        _jobid=$1
-    fi
-    echo $_jobid
-    _nodesid=$(squeue -u $USER -l | awk 'NR==3{print $NF}')
-    _nodeid=$(echo "$_nodesid" | sed "s/\[\([0-9]*\)-\([0-9]*\)]/\1/")
-    srun --jobid=$_jobid -w$_nodeid --overlap --pty bash
-}
 
 function spack_root() {
     if [[ -z $SPACK_ROOT ]]; then
@@ -863,13 +826,11 @@ function remote_add() {
 }
 ###############################################################################
 
-# SLURM
-# Cancels the first jobs prompting when doing squ
-function cancel() {
-    jobid=$(squ | awk '{print $1}' | awk '/JOBID/{getline; print}')
-    echo "cancel jobid $jobid"
-    scancel $jobid
+function set_visible_gpus_according_to_mask() {
+    numa_nodes=$(hwloc-calc --physical --intersect NUMAnode $(taskset -p $$ | awk '{print "0x"$6}'))
+    export CUDA_VISIBLE_DEVICES=$numa_nodes
 }
+
 
 ###############################################################################
 # CLEAR
