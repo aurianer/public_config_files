@@ -58,17 +58,21 @@ alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
 alias ta='vim -t'   # Find a specific tag definition
 
 alias notify="zenity --info --text=\"Job finished\""
+print_amd_gfx_arch='rocminfo | grep gfx'
 
 # GPU metrics
 alias power_cap='nvidia-smi -q -d POWER'
 alias supported_clocks='nvidia-smi -q -d SUPPORTED_CLOCKS'
 alias measure_gpu_metrics='nvidia-smi --query-gpu=index,timestamp,power.draw,clocks.sm,clocks.mem,clocks.gr --format=csv -l 1'
 
+alias print_public_key='ssh-keygen -y -f'
+
 #Spack
 alias spack_location="cd $SPACK_ROOT"
 
 # Python
 alias upgrade_pip='python -m ensurepip && python -m pip install --upgrade pip'
+alias pip='pip --disable-pip-version-check'
 
 # Containers
 alias podman_login_ngc="podman login nvcr.io"
