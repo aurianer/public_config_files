@@ -770,7 +770,10 @@ function repeat-until-failure {
 }
 
 # GPG key generation
-alias gpgcreate='gpg --full-generate-key'
+alias gpg_create='gpg --full-generate-key'
+alias gpg_list_public_key='gpg --list-keys --keyid-format=long'
+alias gpg_list_secret_key='gpg --list-secret-keys --keyid-format=long'
+alias gpg_get_public_key='gpg --armor --export'
 
 ###############################################################################
 
