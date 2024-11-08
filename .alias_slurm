@@ -17,7 +17,7 @@ alias squ_jobs='squeue -u $USER -s'         # -s to know the job step id
 alias squ_prio='squeue -t pd -S-p'          # List pending jobs with decreasing prio
 # -S-f means sorting features (descending) which are {mc, gpu}
 alias sq='squeue |less'
-alias sq_nodes='squeue --format="%.22N %.8u %.6D %.4c %.8z %.6m %.8d %.6w %.8f %.18G" |less'
+alias sq_nodes="squeue --format=\"%.22N %.8u %.6D %.4c %.8z %.6m %.8d %.6w %.8f %.18G\" |less"
 alias sio='sinfo --summarize -o'
 alias si='sinfo --summarize |less'
 alias si_avail_nodes='sinfo -tidle -p${1:normal}'
@@ -26,6 +26,7 @@ alias si_details_nodes='sinfo -pnormal -tidle -S-f --format="%.22N %.6D %.4c %.8
 alias si_details_nodes_large='sinfo -pnormal -tidle -S-f --format="%.40N %.6D %.4c %.8z %.6m %.8f"'
 alias see_steps='sacct -j'                  # Print the jobsteps for a specific job
 alias prio_factors='sprio -l'               # Display the factors that participate to the resulting priority
+alias squ_print_name="squeue  --job=${1} --format=\"%j\""
 alias list_partitions='sinfo -s'
 alias show_partition='scontrol show partition'
 
@@ -36,6 +37,11 @@ alias show_details_job='scontrol show job' # job id as arg
 alias show_nodes='scontrol show nodes' # optional node id
 alias quota=quota   # To print the quotas left
 alias sat_show='sat showrev'
+alias nodes_state='sinfo -r'
+alias list_reasons_for_drained="sinfo --format=\"%P %A %10t %100E %N\" | grep -E 'drain'"
+alias list_reasons_for_down="sinfo --format=\"%P %A %10t %100E %N\" | grep -E 'down'"
+alias jobs_down_nodes="sacct  -o \"user,start,jobid%-16,elapsed,nnodes,state%-16,ConsumedEnergyRaw%-20,ConsumedEnergy,FailedNode%9,Ntasks,NodeList%-46\" --nodelist=\"$(sinfo --format=\"%P %A %10t %N\" | grep --color=none -E 'down' | awk '{print $NF}')\" | grep -E 'FAIL|TIMEOUT|CANCELLED'"
+alias jobs_drained_nodes="sacct  -o \"user,start,jobid%-16,elapsed,nnodes,state%-16,ConsumedEnergyRaw%-20,ConsumedEnergy,FailedNode%9,Ntasks,NodeList%-46\" --nodelist=\"$(sinfo --format=\"%P %A %10t %100E %N\" | grep --color=none -E 'down*' | awk '{print $NF}')\" | grep -E 'FAIL|TIMEOUT|CANCELLED'"
 
 # Go to the first allocated node
 function node() {
@@ -72,4 +78,16 @@ function cancel() {
     jobid=$(squ | awk '{print $1}' | awk '/JOBID/{getline; print}')
     echo "cancel jobid $jobid"
     scancel $jobid
+}
+
+# Try all the reservations possible
+function sall_fallback() {
+    reservations=( $(scontrol show reservation | grep -o "ReservationName[^ ]*" | cut -d= -f2) )
+    for _res in ${reservations[@]}; do
+        salloc -Acsstaff -t240 --reservation=$_res
+        result=$?
+        if [[ $result == 0 ]]; then
+            break;
+        fi
+    done
 }
