@@ -140,6 +140,7 @@
     rev = remote -v
     reflog = reflog --pretty=reflog
     rmf = "!git rm $(git diff --name-only | head -n1)" # Checkout the first modified file
+    root = "!cd $(git rev-parse --show-toplevel)"
     rp = remote prune       # Prune the branches that have been deleted on the remote repo
     rs = reset
     rsh = reset --hard
@@ -170,6 +171,7 @@
     cl = "!git reflog expire --all && git gc --prune=now"
     rp = remote prune   # prune remote tracking deleted branches
     rps = branch -dr    # Delete individual remote tracking branch
+    subrec = "!git submodule update --init --recursive"
 
 # Put i or c or w whether it is on the index or commited or on the working directory
 [diff]
