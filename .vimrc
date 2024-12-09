@@ -278,14 +278,14 @@ nmap <F2> :TagbarToggle<CR>
 
 
 " YCM
-" go to definition of variable/type/function under cursor
-nnoremap <leader>d  ::YcmCompleter GoTo<CR>
-" print type of symbol under the cursor
-nnoremap <leader>ty  ::YcmCompleter GetType<CR>
-" use suggested fix when available
-nnoremap <leader>f  ::YcmCompleter FixMe<CR>
-" refactor the name under the cursor
-nnoremap <leader>n  ::YcmCompleter RefactorRename<space>
+    " go to definition of variable/type/function under cursor
+    nnoremap <leader>d  ::YcmCompleter GoTo<CR>
+    " print type of symbol under the cursor
+    nnoremap <leader>ty  ::YcmCompleter GetType<CR>
+    " use suggested fix when available
+    nnoremap <leader>f  ::YcmCompleter FixMe<CR>
+    " refactor the name under the cursor
+    nnoremap <leader>n  ::YcmCompleter RefactorRename<space>
 
 " Ctrl-P
     "let g:ctrlp_prompt_mappings = {
