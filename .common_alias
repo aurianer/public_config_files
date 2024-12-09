@@ -56,14 +56,18 @@ alias vimf=vimfa
 # open the output of the last command
 alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
 alias ta='vim -t'   # Find a specific tag definition
+alias show_key='sudo showkey --scancodes'
 
 alias notify="zenity --info --text=\"Job finished\""
 print_amd_gfx_arch='rocminfo | grep gfx'
+get_color_spack_concretization="spack --color always -e ./software concretize -f  | sed -e 's/~\([^~+ ]\+\)/\x1B[31m~\1\x1B[0m /g' -e 's/+\([^~+ \x1B]\+\)/\x1B[32m+\1\x1B[0m /g'"
 
 # GPU metrics
 alias power_cap='nvidia-smi -q -d POWER'
 alias supported_clocks='nvidia-smi -q -d SUPPORTED_CLOCKS'
 alias measure_gpu_metrics='nvidia-smi --query-gpu=index,timestamp,power.draw,clocks.sm,clocks.mem,clocks.gr --format=csv -l 1'
+alias network_interface='ifconfig -a'
+alias network_interface_old='ip link show'
 
 alias print_public_key='ssh-keygen -y -f'
 
@@ -438,6 +442,14 @@ function lsacpp() {
 # LS with globbing
 function lsg() {
     ls **/*${1}
+}
+
+function date_format() {
+    echo $(date +"%Y-%m-%d__%H-%M-%S")
+}
+
+function date_suffix() {
+    echo $(date +"%Y-%m-%d")
 }
 
 function print_date() {
