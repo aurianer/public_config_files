@@ -42,6 +42,8 @@ alias list_reasons_for_drained="sinfo --format=\"%P %A %10t %100E %N\" | grep -E
 alias list_reasons_for_down="sinfo --format=\"%P %A %10t %100E %N\" | grep -E 'down'"
 alias jobs_down_nodes="sacct  -o \"user,start,jobid%-16,elapsed,nnodes,state%-16,ConsumedEnergyRaw%-20,ConsumedEnergy,FailedNode%9,Ntasks,NodeList%-46\" --nodelist=\"$(sinfo --format=\"%P %A %10t %N\" | grep --color=none -E 'down' | awk '{print $NF}')\" | grep -E 'FAIL|TIMEOUT|CANCELLED'"
 alias jobs_drained_nodes="sacct  -o \"user,start,jobid%-16,elapsed,nnodes,state%-16,ConsumedEnergyRaw%-20,ConsumedEnergy,FailedNode%9,Ntasks,NodeList%-46\" --nodelist=\"$(sinfo --format=\"%P %A %10t %100E %N\" | grep --color=none -E 'down*' | awk '{print $NF}')\" | grep -E 'FAIL|TIMEOUT|CANCELLED'"
+remove_csstaff_group_permissions_default='setfacl -R  -dm  group:csstaff:--- *'
+remove_csstaff_group_permissions='setfacl -R  -x  group:csstaff:--- *'
 
 # Go to the first allocated node
 function node() {
