@@ -38,12 +38,15 @@ alias show_nodes='scontrol show nodes' # optional node id
 alias quota=quota   # To print the quotas left
 alias sat_show='sat showrev'
 alias nodes_state='sinfo -r'
-alias list_reasons_for_drained="sinfo --format=\"%P %A %10t %100E %N\" | grep -E 'drain'"
-alias list_reasons_for_down="sinfo --format=\"%P %A %10t %100E %N\" | grep -E 'down'"
+alias list_reasons_for_drained="sinfo --format=\"%P %A %10t %100E %N\" | grep --color=none -E 'drain'"
+alias list_reasons_for_down="sinfo --format=\"%P %A %10t %100E %N\" | grep --color=none -E 'down'"
 alias jobs_down_nodes="sacct  -o \"user,start,jobid%-16,elapsed,nnodes,state%-16,ConsumedEnergyRaw%-20,ConsumedEnergy,FailedNode%9,Ntasks,NodeList%-46\" --nodelist=\"$(sinfo --format=\"%P %A %10t %N\" | grep --color=none -E 'down' | awk '{print $NF}')\" | grep -E 'FAIL|TIMEOUT|CANCELLED'"
 alias jobs_drained_nodes="sacct  -o \"user,start,jobid%-16,elapsed,nnodes,state%-16,ConsumedEnergyRaw%-20,ConsumedEnergy,FailedNode%9,Ntasks,NodeList%-46\" --nodelist=\"$(sinfo --format=\"%P %A %10t %100E %N\" | grep --color=none -E 'down*' | awk '{print $NF}')\" | grep -E 'FAIL|TIMEOUT|CANCELLED'"
 remove_csstaff_group_permissions_default='setfacl -R  -dm  group:csstaff:--- *'
 remove_csstaff_group_permissions='setfacl -R  -x  group:csstaff:--- *'
+alias compare_drained_nodes="list_reasons_for_drained > $HOME/projects/drained_nodes_new.txt && diff $HOME/projects/drained_nodes.txt $HOME/projects/drained_nodes_new.txt"
+alias drained_down_nodes="sinfo -a -h -N --format=\"%N %T\" | grep -E 'drain|down'"
+alias reasons_for_drained_down_nodes="drained_down_nodes"
 
 # Go to the first allocated node
 function node() {
