@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-export EDITOR=/usr/bin/vim
+export EDITOR=vim
 
 # SET UP PROMPT
 PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\] '
@@ -31,7 +31,7 @@ export HISTSIZE=10000
 export HISTFILESIZE=20000
 # To make bash_history immediate (-a), clean to the size specified above (-c), push to history (-r)
 shopt -s histappend
-export PROMPT_COMMAND="history -a; history -c; history -r;$PROMPT_COMMAND"
+export PROMPT_COMMAND="history -a; history -c; history -r;"
 
 # Add git completion
 #source /usr/share/bash-completion/completions/git
@@ -74,5 +74,5 @@ export pika_common_configure_extra_options="-GNinja -DCMAKE_BUILD_TYPE=${build_t
 ## To enable debug command in git
 #export GIT_TRACE=1
 
-## To print from where are executing everything related to bash
+# To print from where are executing everything related to bash
 #PS4='+$BASH_SOURCE> ' BASH_XTRACEFD=7 bash -xl 7>&2
