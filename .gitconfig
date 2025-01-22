@@ -242,3 +242,5 @@
     #fpr = "!git fetch origin pull/$1/head:pr$1 #" # to fetch a PR
 [init]
 	defaultBranch = main
+[credential]
+	helper = store

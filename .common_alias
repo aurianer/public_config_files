@@ -58,6 +58,9 @@ alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
 alias ta='vim -t'   # Find a specific tag definition
 alias show_key='sudo showkey --scancodes'
 
+alias list_nb_files='lsattr -p -d'  # arg: directory to analyze
+alias count_file='fd . --type f | wc -l'
+
 alias notify="zenity --info --text=\"Job finished\""
 print_amd_gfx_arch='rocminfo | grep gfx'
 get_color_spack_concretization="spack --color always -e ./software concretize -f  | sed -e 's/~\([^~+ ]\+\)/\x1B[31m~\1\x1B[0m /g' -e 's/+\([^~+ \x1B]\+\)/\x1B[32m+\1\x1B[0m /g'"
@@ -641,7 +644,7 @@ function create_venv() {
             _dir="$HOME/virtual_envs/${1}"
             mkdir -p $_dir > /dev/null
         else
-            _dir="$SCRATCH/virtual_envs/${1}"
+            _dir="$SCRATCH/virtual_envs/$(uname -m)/${1}"
         fi
 	python3 -m venv $_dir
 	echo "${1} environment created"
@@ -654,7 +657,12 @@ function activate() {
 	error_missing_args "${FUNCNAME}"
 	usage_func "${FUNCNAME} <env_name>"
     else
-	source ~/virtual_envs/${1}/bin/activate && \
+        if [[ -z $CLUSTER_NAME ]]; then
+            _dir="~/virtual_envs/${1}"
+        else
+            _dir="$SCRATCH/virtual_envs/$(uname -m)/${1}"
+        fi
+	source $_dir/bin/activate && \
         echo "${1} environment activated"
     fi
 }
