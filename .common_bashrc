@@ -27,8 +27,8 @@ shopt -s direxpand
 # don't put duplicate lines or lines starting with space in the history.
 export HISTCONTROL=ignoreboth
 # Put limits on bash history files
-export HISTSIZE=10000
-export HISTFILESIZE=20000
+export HISTSIZE=50000
+export HISTFILESIZE=25000
 # To make bash_history immediate (-a), clean to the size specified above (-c), push to history (-r)
 shopt -s histappend
 export PROMPT_COMMAND="history -a; history -c; history -r;"
