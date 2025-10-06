@@ -57,6 +57,13 @@ alias vimf=vimfa
 alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
 alias ta='vim -t'   # Find a specific tag definition
 alias show_key='sudo showkey --scancodes'
+alias create_bootable='sudo dd if=/home/emily/Downloads/ubuntu-24.04.3-desktop-amd64.iso of=/dev/sdaX bs=4M status=progress oflag=sync'
+alias claude_add_mcp='claude mcp add context7 -- npx -y @upstash/context7-mcp'
+function git_add_glypt_user {
+    root_git_dir=$(git rev-parse --git-dir)
+    echo $'[user]\n\temail = 8trash-can8@protonmail.ch\n\tname = glypt\n\tsigningkey = 0AD5184BB602D823\n[commit]\n\tgpgSign = true\n[rebase]\n\tgpgSign = true\n[cherry-pick]\n\tgpgSign = true' | cat - "$root_git_dir/config" > $root_git_dir/config.tmp
+    mv $root_git_dir/config.tmp $root_git_dir/config
+}
 
 alias list_nb_files='lsattr -p -d'  # arg: directory to analyze
 alias count_file='fd . --type f | wc -l'

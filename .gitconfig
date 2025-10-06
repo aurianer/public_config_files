@@ -4,21 +4,8 @@
 # Distributed under the Boost Software License, Version 1.0. (See accompanying
 # file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 
-[user]
-    email = aurianer@cscs.ch
-    name = aurianer
-
 [advice]
     detachedHead = false
-
-[commit]
-    gpgSign = false
-
-[cherry-pick]
-    gpgSign = false
-
-[rebase]
-    gpgSign = false
 
 [core]
     editor=vim
@@ -97,7 +84,8 @@
     dlb = branch -d
     dlbf = branch -D
     fa = fetch --all
-    fpr = "!git fetch --no-tags origin pull/$1/head:pr$1 #" # to fetch a PR
+    #fpr = "!git fetch --no-tags origin pull/${2:-$1}/head:pr${2:-$1} #" # to fetch a PR
+    fpr = "!f() { if [ \"$#\" -eq 1 ]; then remote=origin; pr=$1; else remote=$1; pr=$2; fi; git fetch --no-tags $remote pull/$pr/head:pr$pr; }; f"
     ft = fetch --no-tags
     ftprune = fetch --prune  # Delete branches which have been deleted on the remote
     # Add a + in front of the first refs (the local one) to overwrite it
