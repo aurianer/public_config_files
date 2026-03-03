@@ -57,7 +57,8 @@ alias vimf=vimfa
 alias vl='vim -o $(fc -s)'    # Equivalent to vim -o $(!!) in commandline
 alias ta='vim -t'   # Find a specific tag definition
 alias show_key='sudo showkey --scancodes'
-alias create_bootable='sudo dd if=/home/emily/Downloads/ubuntu-24.04.3-desktop-amd64.iso of=/dev/sdaX bs=4M status=progress oflag=sync'
+alias create_bootable_usb='sudo dd if=/home/emily/Downloads/ubuntu-24.04.3-desktop-amd64.iso of=/dev/sdaX bs=4M status=progress oflag=sync'
+alias format_usb='sudo umount /dev/sdaX && sudo dd if=/dev/zero of=/dev/sdaX bs=4M status=progress && sudo fdisk /dev/sdaX'
 alias claude_add_mcp='claude mcp add context7 -- npx -y @upstash/context7-mcp'
 function git_add_glypt_user {
     root_git_dir=$(git rev-parse --git-dir)
@@ -283,14 +284,14 @@ function gp() {
     # Ignore case
     # Avoid binary files
     #rg --vimgrep --hidden --no-ignore --ignore-case --color=always --ignore-file=tags "$@"
-    grep -rIin "$@" --exclude=tags --exclude-dir=\.git --exclude=compile_commands.json
+    grep -rIin "$@" --exclude=tags --exclude-dir=\.mypy_cache --exclude-dir=\.git --exclude=compile_commands.json
 }
 
 function gpc() {
     # Match case
     # Avoid binary files
     #rg --vimgrep --hidden --no-ignore --case-sensitive --color=always --ignore-file=tags "$@"
-    grep -rnI "$@" --exclude=tags --exclude-dir=\.git
+    grep -rnI "$@" --exclude=tags --exclude-dir=\.git --exclude-dir=\.mypy_cache
 }
 
 function gpa() {
@@ -351,7 +352,7 @@ function gp-exclude() {
 
 # Grep recursively on the includes
 function gpinc() {
-    if [[ "$1" =~ ".h" ]] || [[ "$1" =~ ".c" ]]; then
+    if [[ "$1" =~ ".h" ]] || [[ "$1" =~ ".c" ]] || [[ "$1" =~ ".cu" ]]; then
         sequence1="include.*$1\>"
         sequence2="include.*$1\""
     else
@@ -629,7 +630,16 @@ function size_dir() {
 
 ###############################################################################
 # PYTHON
-alias pyvenv='python3 -m venv'
+function pyvenv() {
+    if [[ -z "$CLUSTER_NAME" ]]; then
+        python3 -m venv "~/virtual_envs/$1"
+    else
+        python3 -m venv "/capstor/scratch/cscs/aurianer/virtual_envs/$(uname -m)/$1"
+    fi
+}
+function uvenv() {
+    uv venv ~/uv_envs/${1}
+}
 # Conda
 alias condaenv='conda create -n cffi_env python=3.9'
 
@@ -665,7 +675,7 @@ function activate() {
 	usage_func "${FUNCNAME} <env_name>"
     else
         if [[ -z $CLUSTER_NAME ]]; then
-            _dir="~/virtual_envs/${1}"
+            _dir="$HOME/virtual_envs/${1}"
         else
             _dir="$SCRATCH/virtual_envs/$(uname -m)/${1}"
         fi
@@ -863,6 +873,10 @@ function remote_add() {
 function set_visible_gpus_according_to_mask() {
     numa_nodes=$(hwloc-calc --physical --intersect NUMAnode $(taskset -p $$ | awk '{print "0x"$6}'))
     export CUDA_VISIBLE_DEVICES=$numa_nodes
+}
+
+function restrict_claude() {
+    firejail   --noroot --whitelist=~/projects --whitelist=~/config/claude-code --whitelist=~/.npm-global/bin/ --whitelist=~/.nvm --whitelist=~/.claude --whitelist=~/.npm --whitelist=~/.npmrc /home/emily/.npm-global/bin/claude
 }
 
 
