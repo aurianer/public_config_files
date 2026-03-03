@@ -65,6 +65,7 @@ function git_add_glypt_user {
     echo $'[user]\n\temail = 8trash-can8@protonmail.ch\n\tname = glypt\n\tsigningkey = 0AD5184BB602D823\n[commit]\n\tgpgSign = true\n[rebase]\n\tgpgSign = true\n[cherry-pick]\n\tgpgSign = true' | cat - "$root_git_dir/config" > $root_git_dir/config.tmp
     mv $root_git_dir/config.tmp $root_git_dir/config
 }
+alias process_port=' lsof -i :8765'
 
 alias list_nb_files='lsattr -p -d'  # arg: directory to analyze
 alias count_file='fd . --type f | wc -l'
@@ -72,6 +73,7 @@ alias count_file='fd . --type f | wc -l'
 alias notify="zenity --info --text=\"Job finished\""
 print_amd_gfx_arch='rocminfo | grep gfx'
 get_color_spack_concretization="spack --color always -e ./software concretize -f  | sed -e 's/~\([^~+ ]\+\)/\x1B[31m~\1\x1B[0m /g' -e 's/+\([^~+ \x1B]\+\)/\x1B[32m+\1\x1B[0m /g'"
+alias kubectl='KUBECONFIG=/tmp/k3s-kubeconfig kubectl'
 
 # GPU metrics
 alias power_cap='nvidia-smi -q -d POWER'
@@ -284,7 +286,8 @@ function gp() {
     # Ignore case
     # Avoid binary files
     #rg --vimgrep --hidden --no-ignore --ignore-case --color=always --ignore-file=tags "$@"
-    grep -rIin "$@" --exclude=tags --exclude-dir=\.mypy_cache --exclude-dir=\.git --exclude=compile_commands.json
+    grep -rIin "$@" --exclude=tags --exclude-dir=\.mypy_cache --exclude-dir=\.git --exclude=compile_commands.json \
+    --exclude=*.graphml --exclude-dir=node_modules --exclude-dir=\.angular
 }
 
 function gpc() {
@@ -879,6 +882,14 @@ function restrict_claude() {
     firejail   --noroot --whitelist=~/projects --whitelist=~/config/claude-code --whitelist=~/.npm-global/bin/ --whitelist=~/.nvm --whitelist=~/.claude --whitelist=~/.npm --whitelist=~/.npmrc /home/emily/.npm-global/bin/claude
 }
 
+function set_visible_gpus_according_to_mask() {
+    numa_nodes=$(hwloc-calc --physical --intersect NUMAnode $(taskset -p $$ | awk '{print "0x"$6}'))
+    export CUDA_VISIBLE_DEVICES=$numa_nodes
+}
+
+function backup_database () {
+    podman exec backend-database pg_dump -U postgres -d klynt | gzip > /opt/klynt-db/backup_klynt_$(TZ=Europe/Paris date +%Y%m%d_%H%M%S).sql.gz
+}
 
 ###############################################################################
 # CLEAR
