@@ -85,6 +85,7 @@
     dl = "!git push --delete aurianer $1; git branch -D $1 #" # Cannot push --delete several branches
     dlb = branch -d
     dlbf = branch -D
+    donttrack = update-index --assume-unchanged
     fa = fetch --all
     #fpr = "!git fetch --no-tags origin pull/${2:-$1}/head:pr${2:-$1} #" # to fetch a PR
     fpr = "!f() { if [ \"$#\" -eq 1 ]; then remote=origin; pr=$1; else remote=$1; pr=$2; fi; git fetch --no-tags $remote pull/$pr/head:pr$pr; }; f"
@@ -143,6 +144,8 @@
     # https://git-scm.com/docs/git-config/2.1.4#Documentation/git-config.txt-alias
     # Note, this can now be replaced by using feature.manyFiles option for large repos.
     st = "!cd ${GIT_PREFIX:-.} && if [ $(basename $PWD) = spack ]; then git status -uno; else git status; fi"
+    ts = st
+    sw = switch --no-track -c
     configlist="!git config -l"
     stf = status -uno
     shci = log -1 --show-signature	# show commit, followed by the commit hash
@@ -234,5 +237,3 @@
     #fpr = "!git fetch origin pull/$1/head:pr$1 #" # to fetch a PR
 [init]
 	defaultBranch = main
-[credential]
-	helper = store
