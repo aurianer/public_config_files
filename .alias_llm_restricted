@@ -1,0 +1,5 @@
+alias project_dir='cd /home/emily/projects/'
+if [ -f ~/.common_alias ]; then . ~/.common_alias; fi
+
+alias claude_kimi="CLAUDE_CONFIG_DIR=$HOME/.claude-kimi ANTHROPIC_API_KEY=$(cat ~/.token_kimi) ANTHROPIC_BASE_URL=https://ai-gateway.svc.cscs.ch ANTHROPIC_MODEL=kimi-k2-thinking-anthropic ANTHROPIC_SMALL_FAST_MODEL=kimi-k2-thinking-anthropic claude"
+alias claude_kimi2="CLAUDE_CONFIG_DIR=~/.claude-kimi ANTHROPIC_API_KEY=$(cat ~/.token_kimi) ANTHROPIC_BASE_URL=https://ai-gateway.svc.cscs.ch ANTHROPIC_MODEL=kimi-k2-thinking-anthropic claude"
