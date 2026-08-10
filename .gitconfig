@@ -61,7 +61,8 @@
     ciamno = commit --amend --no-edit
     cimano = ciamno # To accept typo
     ciamnono = commit --amend --no-edit --no-verify
-    ciauthor = "!git commit --amend --author=\"$1 $2\" --no-edit"
+    ciauthor = "!GIT_COMMITTER_NAME=\"$1\" GIT_COMMITTER_EMAIL=\"$2\" git commit --amend --no-edit --author=\"$1 $2\" #"
+    ciem = commit --allow-empty
     cino = commit --no-verify
     co = checkout
     cof = "!git checkout $(git diff --name-only | head -n1)" # Checkout the first modified file
@@ -71,6 +72,7 @@
     cpext = "!git --git-dir=$1/.git format-patch -k -1 --stdout $2 | git am -3 -k"
     date = commit --amend --no-edit --date=format:relative:0.hours.ago
     # Adding the quotes and the comment at the end to fix a regression introduced in git 2.28
+    datefix = rebase --committer-date-is-author-date --root
     dateh = "!git commit --amend --no-edit --date=format:relative:${1:-1}.hours.ago #"
     dateset = "!GIT_COMMITTER_DATE=\"$1\" git commit --amend --no-edit --date=\"$1\" #"
     dated = "!GIT_COMMITTER_DATE=\"$(date -d \"${1:-1} day ago\")\" git commit --amend --no-edit --date=format:relative:${1:-1}.day.ago #"
@@ -87,7 +89,7 @@
     dlbf = branch -D
     donttrack = update-index --assume-unchanged
     fa = fetch --all
-    #fpr = "!git fetch --no-tags origin pull/${2:-$1}/head:pr${2:-$1} #" # to fetch a PR
+    fmr = "!f() { if [ \"$#\" -eq 1 ]; then remote=origin; mr=$1; else remote=$1; mr=$2; fi; git fetch --no-tags $remote merge-requests/$mr/head:mr$mr; }; f"
     fpr = "!f() { if [ \"$#\" -eq 1 ]; then remote=origin; pr=$1; else remote=$1; pr=$2; fi; git fetch --no-tags $remote pull/$pr/head:pr$pr; }; f"
     ft = fetch --no-tags
     ftprune = fetch --prune  # Delete branches which have been deleted on the remote
@@ -108,6 +110,7 @@
     followfull = log --graph --oneline --decorate --date=short --follow -- # No pager used
     gp = !git grep $1 $(git rev-list --all) # grep accross revisions
     gti = git
+    ignoregitignore = "!echo '.gitignore' >> .git/info/exclude"
     lfb = log --graph --oneline --decorate --pretty=tformat:'%C(auto)%h%d %s %C(blue)%ad' --date=short # Log specific branch without the print in the terminal
     lf = lfb --all #when mispelling or to not have the same pager
     lg = log --all --graph --pretty=tformat:'%C(auto)%h%d %s %C(blue)%ad' --date=short
